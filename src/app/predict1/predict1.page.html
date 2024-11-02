@@ -1,0 +1,154 @@
+
+<ion-header>
+  <ion-toolbar class="custom-content">
+    <ion-buttons slot="start" class="custom-back-button">
+      <ion-back-button defaultHref="prediccion/tabs/tab1"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="color: black;">Predicciones de Anemia</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="custom-content">
+  <form class="form-container">
+    <ion-card class="custom-content">
+      <ion-card-header>
+        <ion-card-title style="color: black;">Información Personal</ion-card-title>
+      </ion-card-header>
+      <ion-card-content >
+        <ion-item class="custom-content">
+          <ion-label position="floating" style="color: black;">DNI</ion-label>
+          <ion-input type="text" ></ion-input>
+          <ion-button slot="end">Buscar</ion-button>
+        </ion-item>
+        <div *ngIf="" class="error-message">
+          DNI es requerido y debe ser válido.
+        </div>
+
+         <ion-item class="custom-content">
+          <ion-label position="floating" style="color: black;">Nombre y Apellido</ion-label>
+          <ion-input type="text" ></ion-input>
+        </ion-item>
+        <div *ngIf="" class="error-message">
+          Nombre y Apellido es requerido y debe ser válido.
+        </div>
+
+        <ion-item color="custom-content">
+          <ion-label position="floating" style="color: black;">Edad (mes)</ion-label>
+          <ion-input type="number" ></ion-input>
+        </ion-item>
+        <div *ngIf="" class="error-message">
+          Edad es requerida y debe estar entre 6 y 60 meses.
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="custom-content">
+      <ion-card-header>
+        <ion-card-title style="color: black;">Medidas Corporales</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item class="custom-content">
+          <ion-label position="floating" style="color: black;">Peso (kg)</ion-label>
+          <ion-input type="number" ></ion-input>
+        </ion-item>
+        <div *ngIf="" class="error-message">
+          <div *ngIf="">Peso es requerido.</div>
+          <div *ngIf="">
+            Peso fuera del rango para la edad especificada. Debe estar entre
+             y
+             kg.
+          </div>
+        </div>
+
+        <ion-item class="custom-content">
+          <ion-label position="floating" style="color: black;">Altura (cm)</ion-label>
+          <ion-input type="number" ></ion-input>
+        </ion-item>
+        <div *ngIf="" class="error-message">
+          <div *ngIf="">Altura es requerida.</div>
+          <div *ngIf="">
+            Altura fuera del rango para la edad especificada. Debe estar entre
+             y
+            cm.
+          </div>
+        </div>
+
+        <ion-item class="custom-content">
+          <ion-label style="color: black;">Sexo</ion-label>
+          <ion-select>
+            <ion-select-option value="M">Masculino</ion-select-option>
+            <ion-select-option value="F">Femenino</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <div *ngIf="" class="error-message">
+          Sexo es requerido.
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="custom-content">
+      <ion-card-header>
+        <ion-card-title style="color: black;">Resultados de Laboratorio</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item class="custom-content">
+          <ion-label position="floating" style="color: black;">Hmg (g/dl)</ion-label>
+          <ion-input type="number" ></ion-input>
+        </ion-item>
+        <div *ngIf="" class="error-message">
+          Hmg es requerido y debe estar entre 5 y 18.5 g/dl.
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button expand="full" type="submit" color="primary" class="submit-button">Predecir</ion-button>
+  </form>
+
+  <ion-alert
+    [isOpen]=""
+    header="Resultado"
+    message="No tiene anemia"
+    buttons="OK">
+  </ion-alert>
+
+  <ion-alert
+    [isOpen]=""
+    header="Registro"
+    message="Registro exitoso"
+    buttons="OK">
+  </ion-alert>
+
+  <ion-alert
+    [isOpen]=""
+    header="Enviar a WhatsApp"
+    message="¿Deseas enviar esta información a WhatsApp?"
+    inputs="[{ name: 'numero', type: 'text', placeholder: 'Ingrese su número de WhatsApp' }]"
+    buttons="[
+      { text: 'Solo Predecir', role: 'cancel' },
+      { text: 'Enviar', handler: (data) => sendToWhatsApp(data.numero) }
+    ]">
+  </ion-alert>
+</ion-content>
+
+<style>
+  .custom-content {
+    --background: white;
+  }
+  .form-container {
+    padding: 16px;
+  }
+  .custom-back-button {
+    --color: black;
+  }
+  .submit-button {
+    margin-top: 20px;
+  }
+  .resultado-container {
+    margin-top: 20px;
+  }
+  .error-message {
+    color: red;
+    font-size: 12px;
+    margin-left: 16px;
+  }
+</style>
