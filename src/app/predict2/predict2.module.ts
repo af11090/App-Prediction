@@ -7,13 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { Predict2PageRoutingModule } from './predict2-routing.module';
 
 import { Predict2Page } from './predict2.page';
-
+import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    Predict2PageRoutingModule
+    Predict2PageRoutingModule,
+    ReactiveFormsModule
   ],
   declarations: [Predict2Page]
 })

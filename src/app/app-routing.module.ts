@@ -5,7 +5,8 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
-  },  {
+  },
+  {
     path: 'predict1',
     loadChildren: () => import('./predict1/predict1.module').then( m => m.Predict1PageModule)
   },

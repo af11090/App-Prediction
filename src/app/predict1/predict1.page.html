@@ -1,15 +1,15 @@
 
 <ion-header>
   <ion-toolbar class="custom-content">
-    <ion-buttons slot="start" class="custom-back-button">
-      <ion-back-button defaultHref="prediccion/tabs/tab1"></ion-back-button>
+    <ion-buttons slot="start" >
+      <ion-back-button  defaultHref="tabs/tab1" class="custom-back-button"></ion-back-button>
     </ion-buttons>
     <ion-title style="color: black;">Predicciones de Anemia</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="custom-content">
-  <form class="form-container">
+  <form [formGroup]="anemiaForm" class="form-container" (ngSubmit)="onSubmit()">
     <ion-card class="custom-content">
       <ion-card-header>
         <ion-card-title style="color: black;">Información Personal</ion-card-title>
@@ -17,26 +17,35 @@
       <ion-card-content >
         <ion-item class="custom-content">
           <ion-label position="floating" style="color: black;">DNI</ion-label>
-          <ion-input type="text" ></ion-input>
-          <ion-button slot="end">Buscar</ion-button>
+          <ion-input type="text" formControlName="dni" style="color: black;"></ion-input>
+          <ion-button slot="end" (click)="onDniSearch()">Buscar</ion-button>
         </ion-item>
-        <div *ngIf="" class="error-message">
+        <div *ngIf="anemiaForm.get('dni')?.touched && anemiaForm.get('dni')?.invalid" class="error-message">
           DNI es requerido y debe ser válido.
         </div>
 
-         <ion-item class="custom-content">
+        <ion-item class="custom-content">
           <ion-label position="floating" style="color: black;">Nombre y Apellido</ion-label>
-          <ion-input type="text" ></ion-input>
+          <ion-input type="text" formControlName="nombre_apellido" style="color: black;"></ion-input>
         </ion-item>
-        <div *ngIf="" class="error-message">
+        <div *ngIf="anemiaForm.get('nombre_apellido')?.touched && anemiaForm.get('nombre_apellido')?.invalid" class="error-message">
           Nombre y Apellido es requerido y debe ser válido.
         </div>
-
-        <ion-item color="custom-content">
-          <ion-label position="floating" style="color: black;">Edad (mes)</ion-label>
-          <ion-input type="number" ></ion-input>
+        <ion-item class="custom-content">
+          <ion-label style="color: black;">Sexo</ion-label>
+          <ion-select style="color: black;" formControlName="sexo">
+            <ion-select-option value="M" >Masculino</ion-select-option>
+            <ion-select-option value="F" >Femenino</ion-select-option>
+          </ion-select>
         </ion-item>
-        <div *ngIf="" class="error-message">
+        <div *ngIf="anemiaForm.get('sexo')?.touched && anemiaForm.get('sexo')?.invalid" class="error-message" class="error-message">
+          Sexo es requerido.
+        </div>
+        <ion-item class="custom-content">
+          <ion-label position="floating" style="color: black;">Edad (mes)</ion-label>
+          <ion-input type="number" formControlName="edad" style="color: black;"></ion-input>
+        </ion-item>
+        <div *ngIf="anemiaForm.get('edad')?.touched && anemiaForm.get('edad')?.invalid" class="error-message">
           Edad es requerida y debe estar entre 6 y 60 meses.
         </div>
       </ion-card-content>
@@ -49,40 +58,31 @@
       <ion-card-content>
         <ion-item class="custom-content">
           <ion-label position="floating" style="color: black;">Peso (kg)</ion-label>
-          <ion-input type="number" ></ion-input>
+          <ion-input type="number"  formControlName="peso" style="color: black;"></ion-input>
         </ion-item>
-        <div *ngIf="" class="error-message">
-          <div *ngIf="">Peso es requerido.</div>
-          <div *ngIf="">
+        <div *ngIf="anemiaForm.get('peso')?.touched && anemiaForm.get('peso')?.errors" class="error-message">
+          <div *ngIf="anemiaForm.get('peso')?.hasError('required')">Peso es requerido.</div>
+          <div *ngIf="anemiaForm.get('peso')?.hasError('pesoOutOfRange')">
             Peso fuera del rango para la edad especificada. Debe estar entre
-             y
-             kg.
+            {{ anemiaForm.get('peso')?.getError('peso_min') }} y
+            {{ anemiaForm.get('peso')?.getError('peso_max') }} kg.
           </div>
         </div>
 
         <ion-item class="custom-content">
           <ion-label position="floating" style="color: black;">Altura (cm)</ion-label>
-          <ion-input type="number" ></ion-input>
+          <ion-input type="number" formControlName="altura" style="color: black;"></ion-input>
         </ion-item>
-        <div *ngIf="" class="error-message">
-          <div *ngIf="">Altura es requerida.</div>
-          <div *ngIf="">
+        <div *ngIf="anemiaForm.get('altura')?.touched && anemiaForm.get('altura')?.errors" class="error-message">
+          <div *ngIf="anemiaForm.get('altura')?.hasError('required')">Altura es requerida.</div>
+          <div *ngIf="anemiaForm.get('altura')?.hasError('alturaOutOfRange')">
             Altura fuera del rango para la edad especificada. Debe estar entre
-             y
-            cm.
+            {{ anemiaForm.get('altura')?.getError('altura_min') }} y
+            {{ anemiaForm.get('altura')?.getError('altura_max') }} cm.
           </div>
         </div>
 
-        <ion-item class="custom-content">
-          <ion-label style="color: black;">Sexo</ion-label>
-          <ion-select>
-            <ion-select-option value="M">Masculino</ion-select-option>
-            <ion-select-option value="F">Femenino</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <div *ngIf="" class="error-message">
-          Sexo es requerido.
-        </div>
+
       </ion-card-content>
     </ion-card>
 
@@ -93,9 +93,9 @@
       <ion-card-content>
         <ion-item class="custom-content">
           <ion-label position="floating" style="color: black;">Hmg (g/dl)</ion-label>
-          <ion-input type="number" ></ion-input>
+          <ion-input type="number" formControlName="hmg" style="color: black;" ></ion-input>
         </ion-item>
-        <div *ngIf="" class="error-message">
+        <div *ngIf="anemiaForm.get('hmg')?.touched && anemiaForm.get('hmg')?.invalid" class="error-message">
           Hmg es requerido y debe estar entre 5 y 18.5 g/dl.
         </div>
       </ion-card-content>
@@ -105,29 +105,32 @@
   </form>
 
   <ion-alert
-    [isOpen]=""
-    header="Resultado"
-    message="No tiene anemia"
-    buttons="OK">
-  </ion-alert>
+  [isOpen]="isNoAnemiaAlertOpen"
+  header="Resultado"
+  message="No tiene anemia"
+  buttons="OK"
+  (didDismiss)="isNoAnemiaAlertOpen = false">
+</ion-alert>
 
-  <ion-alert
-    [isOpen]=""
-    header="Registro"
-    message="Registro exitoso"
-    buttons="OK">
-  </ion-alert>
+<ion-alert
+  [isOpen]="isRegistroExitosoAlertOpen"
+  header="Registro"
+  message="Registro exitoso"
+  buttons="OK"
+  (didDismiss)="isRegistroExitosoAlertOpen = false">
+</ion-alert>
 
-  <ion-alert
-    [isOpen]=""
-    header="Enviar a WhatsApp"
-    message="¿Deseas enviar esta información a WhatsApp?"
-    inputs="[{ name: 'numero', type: 'text', placeholder: 'Ingrese su número de WhatsApp' }]"
-    buttons="[
-      { text: 'Solo Predecir', role: 'cancel' },
-      { text: 'Enviar', handler: (data) => sendToWhatsApp(data.numero) }
-    ]">
-  </ion-alert>
+<ion-alert
+  [isOpen]="isWhatsAppAlertOpen"
+  header="Enviar a WhatsApp"
+  message="¿Deseas enviar esta información a WhatsApp?"
+  inputs="[{ name: 'numero', type: 'text', placeholder: 'Ingrese su número de WhatsApp' }]"
+  buttons="[
+    { text: 'Solo Predecir', role: 'cancel' },
+    { text: 'Enviar', handler: (data) => sendToWhatsApp(data.numero) }
+  ]"
+  (didDismiss)="isWhatsAppAlertOpen = false">
+</ion-alert>
 </ion-content>
 
 <style>
@@ -150,5 +153,8 @@
     color: red;
     font-size: 12px;
     margin-left: 16px;
+  }
+  .custom-back-button {
+    --color: black;
   }
 </style>
