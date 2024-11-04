@@ -38,7 +38,15 @@ const routes: Routes = [
   {
     path: 'home', //Se agregó home para bienvenido
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
+  },  {
+    path: 'tabpaciente',
+    loadChildren: () => import('./tabpaciente/tabpaciente.module').then( m => m.TabpacientePageModule)
+  },
+  {
+    path: 'add-paciente',
+    loadChildren: () => import('./add-paciente/add-paciente.module').then( m => m.AddPacientePageModule)
   }
+
   
 
 

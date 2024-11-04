@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-title>{{ isEditMode ? 'Editar Paciente' : 'Agregar Paciente' }}</ion-title>
+      <ion-buttons slot="end">
+          <ion-button (click)="dismiss()"><ion-icon name="close"></ion-icon></ion-button>
+      </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="pacienteForm" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label position="stacked">DNI</ion-label>
+      <ion-input type="text" formControlName="dni"></ion-input>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label position="stacked">Nombres</ion-label>
+      <ion-input type="text" formControlName="nombres"></ion-input>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label position="stacked">Apellidos</ion-label>
+      <ion-input type="text" formControlName="apellidos"></ion-input>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label position="stacked">Sexo</ion-label>
+      <ion-select formControlName="sexo">
+        <ion-select-option value="1">Masculino</ion-select-option>
+        <ion-select-option value="2">Femenino</ion-select-option>
+      </ion-select>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label>Estado</ion-label>
+      <ion-select formControlName="estado" required>
+          <ion-select-option value="1">Activo</ion-select-option>
+          <ion-select-option value="0">Inactivo</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button expand="full" type="submit">{{ isEditMode ? 'Actualizar' : 'Registrar' }}</ion-button>
+  </form>
+</ion-content>

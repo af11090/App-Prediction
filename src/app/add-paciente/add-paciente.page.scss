@@ -1,0 +1,8 @@
+ion-button {
+  --background: transparent; /* Fondo transparente */
+  --color: red; /* Color del texto o icono */
+}
+
+ion-button:hover {
+  --color: darkred; /* Cambiar color al pasar el ratón */
+}

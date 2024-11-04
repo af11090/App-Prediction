@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
 import { AlertController, NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,24 +11,24 @@ import { AlertController, NavController } from '@ionic/angular';
 })
 export class LoginPage implements OnInit {
 
-  formLogin : FormGroup;
-  formRegistro : FormGroup;
-  errorMessage: string = '';
+  formLogin: FormGroup;
+  formRegistro: FormGroup;
   segment: string = 'login';
+  errorMessage: string = '';  // Añadir la propiedad errorMessage
   @Input() doctor: any;
 
   constructor(
-    private router:Router,
-    private authService:AuthService,
-    private formBuilder:FormBuilder,
-    private navCtrl:NavController,
-    public alertController:AlertController, 
+    private router: Router,
+    private authService: AuthService,
+    private formBuilder: FormBuilder,
+    private navCtrl: NavController,
+    public alertController: AlertController,
   ) {
     this.formLogin = this.formBuilder.group({
       dni: ['', [Validators.required, Validators.minLength(8)]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
-    
+
     this.formRegistro = this.formBuilder.group({
       Nombres: ['', Validators.required],
       Apellidos: ['', Validators.required],
@@ -39,20 +39,21 @@ export class LoginPage implements OnInit {
     });
   }
 
-  
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   async iniciar() {
     let dni = this.formLogin.value.dni;
     let password = this.formLogin.value.password;
-
-    const verificarCredencialesObserver = {
+  
+    this.authService.verificarLogin(dni, password).subscribe({
       next: async (response: any) => {
-        if (response.login) {
-          console.log('Redirigir a la vista de home');
-          this.navCtrl.navigateRoot('home');
-
+        if (response.login && response.data) {
+          // Guardar el ID del doctor y el objeto del doctor en AuthService
+          localStorage.setItem('id_doctor', response.data.id_doctor.toString());
+          this.authService.setDoctorData(response.data); // Guarda los datos en el servicio
+  
+          // Redirigir a la vista principal
+          this.navCtrl.navigateRoot('tabs/tabs/tab1');
         } else {
           const alert = await this.alertController.create({
             header: "Error",
@@ -63,7 +64,6 @@ export class LoginPage implements OnInit {
         }
       },
       error: async (err: any) => {
-        console.error('Error al autenticar:', err);
         const alert = await this.alertController.create({
           header: "Error",
           message: 'Hubo un problema con la autenticación. Inténtalo de nuevo.',
@@ -71,20 +71,14 @@ export class LoginPage implements OnInit {
         });
         await alert.present();
       }
-    };
-
-    this.authService.verificarLogin(dni, password).subscribe(verificarCredencialesObserver);
+    });
   }
 
   async registrar() {
-    console.log('Formulario enviado');
     const doctor = this.formRegistro.value;
-    console.log(doctor);
 
-    const crearDoctorObserver = {
+    this.authService.crearDoctor(doctor).subscribe({
       next: async (response: any) => {
-        console.log('Doctor creado:', response);
-        //this.navCtrl.navigateRoot('');
         const alert = await this.alertController.create({
           header: "Éxito",
           message: 'Registro exitoso',
@@ -95,15 +89,14 @@ export class LoginPage implements OnInit {
       },
       error: async (err: any) => {
         console.error('Error al crear doctor:', err);
+        this.errorMessage = 'Hubo un problema con el registro. Inténtalo de nuevo.';
         const alert = await this.alertController.create({
           header: "Error",
-          message: 'Hubo un problema con el registro. Inténtalo de nuevo.',
+          message: this.errorMessage,
           buttons: ['Aceptar']
         });
         await alert.present();
       }
-    };
-
-    this.authService.crearDoctor(doctor).subscribe(crearDoctorObserver);
+    });
   }
 }
