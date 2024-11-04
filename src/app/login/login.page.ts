@@ -22,13 +22,13 @@ export class LoginPage implements OnInit {
     private authService:AuthService,
     private formBuilder:FormBuilder,
     private navCtrl:NavController,
-    public alertController:AlertController, 
+    public alertController:AlertController,
   ) {
     this.formLogin = this.formBuilder.group({
       dni: ['', [Validators.required, Validators.minLength(8)]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
-    
+
     this.formRegistro = this.formBuilder.group({
       Nombres: ['', Validators.required],
       Apellidos: ['', Validators.required],
@@ -39,7 +39,7 @@ export class LoginPage implements OnInit {
     });
   }
 
-  
+
   ngOnInit() {
   }
 
@@ -51,7 +51,7 @@ export class LoginPage implements OnInit {
       next: async (response: any) => {
         if (response.login) {
           console.log('Redirigir a la vista de home');
-          this.navCtrl.navigateRoot('home');
+          this.navCtrl.navigateRoot('tabs/tabs/tab1');
 
         } else {
           const alert = await this.alertController.create({

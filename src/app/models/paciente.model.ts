@@ -6,5 +6,5 @@ export interface PacienteModel {
 	Apellidos: string;
 	Sexo : string;
 	Estado: number;
-	id_doctor:DoctorModel;
+	iddoctor:DoctorModel;
 }
