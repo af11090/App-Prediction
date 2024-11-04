@@ -60,7 +60,7 @@ export class Listapredict3Page implements OnInit {
     this.http.get<any[]>('http://localhost:3000/api/registros2/3').subscribe({
       next: (data) => {
         const requests = data.map(item =>
-          this.http.get<any>(`http://localhost:3000/api/pacientesid/${item.id_paciente}`).pipe(
+          this.http.get<any>(`http://localhost:3000/api/pacientes/${item.id_paciente}`).pipe(
             map(paciente => ({
               ...item,
               DNI: paciente?.DNI || 'N/A', // Agrega el DNI del paciente o 'N/A' si no está definido
