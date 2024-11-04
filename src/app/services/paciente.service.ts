@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
-import { Paciente } from '../models/paciente.model';
+import { PacienteModel } from '../models/paciente.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,15 +14,15 @@ export class PacienteService {
   constructor(private http: HttpClient) { }
 
   getAllPacientes() {
-    return this.http.get<Paciente[]>(`${this.url}`);
+    return this.http.get<PacienteModel[]>(`${this.url}`);
   }
 
-  addPaciente(paciente: Paciente) {
+  addPaciente(paciente: PacienteModel) {
     return this.http.post(this.url, paciente);
   }
 
-  updatePaciente(id: number, paciente: Paciente) {
-    return this.http.put<Paciente>(`${this.url}/${id}`, paciente);
+  updatePaciente(id: number, paciente: PacienteModel) {
+    return this.http.put<PacienteModel>(`${this.url}/${id}`, paciente);
   }
 
   deletePaciente(id: number) {

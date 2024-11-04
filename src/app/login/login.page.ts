@@ -18,19 +18,11 @@ export class LoginPage implements OnInit {
   @Input() doctor: any;
 
   constructor(
-<<<<<<< HEAD
     private router: Router,
     private authService: AuthService,
     private formBuilder: FormBuilder,
     private navCtrl: NavController,
     public alertController: AlertController,
-=======
-    private router:Router,
-    private authService:AuthService,
-    private formBuilder:FormBuilder,
-    private navCtrl:NavController,
-    public alertController:AlertController,
->>>>>>> 8e44b41296a1a40e6de31951c6ebab698eac6cc8
   ) {
     this.formLogin = this.formBuilder.group({
       dni: ['', [Validators.required, Validators.minLength(8)]],
@@ -47,13 +39,7 @@ export class LoginPage implements OnInit {
     });
   }
 
-<<<<<<< HEAD
   ngOnInit() {}
-=======
-
-  ngOnInit() {
-  }
->>>>>>> 8e44b41296a1a40e6de31951c6ebab698eac6cc8
 
   async iniciar() {
     let dni = this.formLogin.value.dni;
@@ -61,7 +47,6 @@ export class LoginPage implements OnInit {
   
     this.authService.verificarLogin(dni, password).subscribe({
       next: async (response: any) => {
-<<<<<<< HEAD
         if (response.login && response.data) {
           // Guardar el ID del doctor y el objeto del doctor en AuthService
           localStorage.setItem('id_doctor', response.data.id_doctor.toString());
@@ -69,12 +54,6 @@ export class LoginPage implements OnInit {
   
           // Redirigir a la vista principal
           this.navCtrl.navigateRoot('tabs/tabs/tab1');
-=======
-        if (response.login) {
-          console.log('Redirigir a la vista de home');
-          this.navCtrl.navigateRoot('tabs/tabs/tab1');
-
->>>>>>> 8e44b41296a1a40e6de31951c6ebab698eac6cc8
         } else {
           const alert = await this.alertController.create({
             header: "Error",

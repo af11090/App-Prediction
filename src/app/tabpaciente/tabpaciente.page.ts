@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PacienteService } from '../services/paciente.service';
 import { AlertController, ModalController } from '@ionic/angular';
 import { AddPacientePage } from '../add-paciente/add-paciente.page'; 
-import { Paciente } from '../models/paciente.model';
+import { PacienteModel } from '../models/paciente.model';
 
 @Component({
   selector: 'app-tabpaciente',
@@ -10,8 +10,8 @@ import { Paciente } from '../models/paciente.model';
   styleUrls: ['./tabpaciente.page.scss'],
 })
 export class TabpacientePage implements OnInit {
-  patients: Paciente[] = [];
-  filteredPatients: Paciente[] = [];
+  patients: PacienteModel[] = [];
+  filteredPatients: PacienteModel[] = [];
   searchTerm: string = '';
 
   constructor(
@@ -25,7 +25,7 @@ export class TabpacientePage implements OnInit {
   }
 
   loadPatients() {
-    this.pacienteService.getAllPacientes().subscribe((data: Paciente[]) => {
+    this.pacienteService.getAllPacientes().subscribe((data: PacienteModel[]) => {
       this.patients = data;
       this.filteredPatients = [...this.patients]; // Inicializa filteredPatients
       console.log('Pacientes cargados:', this.patients);
@@ -46,7 +46,7 @@ export class TabpacientePage implements OnInit {
     return await modal.present();
   }
 
-  async editPatient(paciente: Paciente) {
+  async editPatient(paciente: PacienteModel) {
     if (paciente.id_paciente !== undefined) {
         const modal = await this.modalCtrl.create({
             component: AddPacientePage,
@@ -67,7 +67,7 @@ export class TabpacientePage implements OnInit {
 
   searchPatients() {
     const term = this.searchTerm.toLowerCase();
-    this.filteredPatients = this.patients.filter((paciente: Paciente) =>
+    this.filteredPatients = this.patients.filter((paciente: PacienteModel) =>
       paciente.Nombres.toLowerCase().includes(term) || paciente.DNI.includes(term)
     );
   }
