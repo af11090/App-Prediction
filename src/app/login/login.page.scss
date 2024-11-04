@@ -1,0 +1,79 @@
+.segment-custom {
+    --background: #f8f9fa;
+    --indicator-color: #007bff;
+    --indicator-height: 4px;
+    --button-background: #ffffff;
+    --button-background-checked: #007bff;
+    --button-color-checked: #ffffff;
+    --button-color: #007bff;
+    --button-border-radius: 20px;
+    margin: 20px;
+  }
+  
+  .form-container {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .fade-in {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  ion-item {
+    --background: #ffffff;
+    --border-radius: 10px;
+    margin-bottom: 15px;
+  }
+  
+  ion-button {
+    --background: #007bff;
+    --border-radius: 20px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .segment-custom {
+    margin: 16px;
+  }
+  
+  .form-card {
+    margin: 16px;
+    padding: 16px;
+  }
+  
+  .form-container {
+    padding: 16px;
+  }
+  
+  .center-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px; /* Espacio debajo de la imagen */
+  }
+  
+  .segment-icon {
+    width: 350px;
+    height: 350px;
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  

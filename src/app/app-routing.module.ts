@@ -3,7 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'tabs', //Cambiar a tabs
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
   },
   {
@@ -29,7 +29,18 @@ const routes: Routes = [
   {
     path: 'listapredict3',
     loadChildren: () => import('./listapredict3/listapredict3.module').then( m => m.Listapredict3PageModule)
+  },
+  {
+    path: '',
+    pathMatch: 'full',
+    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
+  },
+  {
+    path: 'home', //Se agregó home para bienvenido
+    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
   }
+
+
 
 
 

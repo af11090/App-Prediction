@@ -1,8 +1,9 @@
 export interface DoctorModel {
-  id_doctor: number;
-	DNI: string;
-	Nombres: string;
-	Apellidos: string;
-	Sexo: string;
-	Correo: string;
+    iddoctor?: number;
+    dni: string;
+    nombres: string;
+    apellidos: string;
+    sexo: string;
+    correo: string;
+    password: string;
 }
