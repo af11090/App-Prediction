@@ -46,6 +46,10 @@ const routes: Routes = [
     path: 'add-paciente',
     loadChildren: () => import('./add-paciente/add-paciente.module').then( m => m.AddPacientePageModule)
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8e44b41296a1a40e6de31951c6ebab698eac6cc8
 
   
 

@@ -1,13 +1,54 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>listapredict3</ion-title>
+<!-- listpredict1.page.html -->
+
+<ion-header>
+  <ion-toolbar class="custom-content">
+    <ion-buttons slot="start">
+      <ion-back-button class="custom-back-button" defaultHref="tabs/tabs/tab1"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="color: black;">Lista de predicciones de Grado de Severidad de la Anemia</ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-content class="custom-content">
+  <ion-searchbar class="custom-content" style="color: black;" [(ngModel)]="searchTerm" (ionInput)="filterDatos()"></ion-searchbar>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">listapredict3</ion-title>
+  <ion-grid class="responsive-table">
+    <ion-row class="header-row">
+      <ion-col style="color: black;">DNI</ion-col>
+      <ion-col style="color: black;">PACIENTE</ion-col>
+      <ion-col style="color: black;">EDAD</ion-col>
+      <ion-col style="color: black;">HMG</ion-col>
+      <ion-col style="color: black;">FECHA</ion-col>
+      <ion-col style="color: black;">GRADO DE SEVERIDAD</ion-col>
+      <ion-col style="color: black;">ACCIONES</ion-col>
+    </ion-row>
+    <ion-row *ngFor="let dato of paginatedDatos">
+      <ion-col style="color: black;">{{ dato.DNI }}</ion-col>
+      <ion-col style="color: black;">{{ dato.Nombres }}</ion-col>
+      <ion-col style="color: black;">{{ dato.Edad }}</ion-col>
+      <ion-col style="color: black;">{{ dato.Hmg }}</ion-col>
+      <ion-col style="color: black;">{{ dato.Fecha }}</ion-col>
+      <ion-col style="color: black;">{{ dato.Resultado }}</ion-col>
+      <ion-col style="justify-content: center;"> <!-- Nueva columna para los botones -->
+        <!-- <ion-button color="primary">Editar</ion-button> -->
+        <ion-button color="secondary" (click)="eliminar(dato.id_registro)">Eliminar</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-footer>
+    <ion-toolbar class="custom-content">
+      <ion-buttons slot="end">
+        <ion-button style="color: black;" (click)="prevPage()" [disabled]="currentPage === 1">Anterior</ion-button>
+        <ion-button style="color: black;" (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</ion-button>
+      </ion-buttons>
     </ion-toolbar>
-  </ion-header>
+  </ion-footer>
 </ion-content>
+<style>
+  .custom-content {
+    --background: white;
+  }
+  .custom-back-button {
+    --color: black;
+  }
+</style>
+
