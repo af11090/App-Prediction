@@ -1,13 +1,62 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>tab2</ion-title>
+    <ion-title>Reportes Generales</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">tab2</ion-title>
+      <ion-title size="large">Reportes</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <!-- Resumen Textual -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Resumen de Hemoglobina</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Número total de predicciones: {{ totalPacientes }}</p>
+      <p>Promedio de Hemoglobina: {{ promedioHmg }}</p>
+      <p>Nivel mínimo de Hemoglobina: {{ minHmg }}</p>
+      <p>Nivel máximo de Hemoglobina: {{ maxHmg }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Filtros para la tendencia de hemoglobina -->
+  <ion-segment [(ngModel)]="filtroTiempo" (ionChange)="cambiarFiltro($event.detail.value)">
+    <ion-segment-button value="día">
+      Día
+    </ion-segment-button>
+    <ion-segment-button value="semana">
+      Semana
+    </ion-segment-button>
+    <ion-segment-button value="mes">
+      Mes
+    </ion-segment-button>
+    <ion-segment-button value="año">
+      Año
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Gráfico de tendencia de hemoglobina -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Tendencia de Anemia por Nivel de Hemoglobina</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <canvas id="tendenciaAnemiaChart"></canvas>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Gráfico de tendencia de hemoglobina por género -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Tendencia del Nivel de Hemoglobina por Género</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <canvas id="tendenciaGeneroChart"></canvas>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
