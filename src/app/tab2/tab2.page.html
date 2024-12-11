@@ -24,21 +24,21 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Filtros para la tendencia de hemoglobina -->
-  <ion-segment [(ngModel)]="filtroTiempo" (ionChange)="cambiarFiltro($event.detail.value)">
-    <ion-segment-button value="día">
-      Día
-    </ion-segment-button>
-    <ion-segment-button value="semana">
-      Semana
-    </ion-segment-button>
-    <ion-segment-button value="mes">
-      Mes
-    </ion-segment-button>
-    <ion-segment-button value="año">
-      Año
-    </ion-segment-button>
-  </ion-segment>
+  <!-- Filtros -->
+  <ion-card>
+    <ion-card-content>
+
+      <ion-item>
+        <ion-label>Mes</ion-label>
+        <ion-select [(ngModel)]="mesSeleccionado" (ionChange)="cambiarMes($event)">
+          <ion-select-option *ngFor="let mes of meses" [value]="mes.valor">
+            {{mes.texto}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+    </ion-card-content>
+  </ion-card>
 
   <!-- Gráfico de tendencia de hemoglobina -->
   <ion-card>
@@ -50,25 +50,17 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Gráfico de tendencia de hemoglobina por género -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Tendencia del Nivel de Hemoglobina por Género</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <canvas id="tendenciaGeneroChart"></canvas>
-    </ion-card-content>
-  </ion-card>
+
 
   <!-- Distribución por Tipo de Predicción -->
-  <ion-card>
+  <!-- <ion-card>
     <ion-card-header>
       <ion-card-title>Distribución por Tipo de Predicción</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <canvas id="prediccionesChart"></canvas>
     </ion-card-content>
-  </ion-card>
+  </ion-card> -->
 
   <!-- Gráfico Predicción Antropométrica -->
   <ion-card>

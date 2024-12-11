@@ -10,8 +10,8 @@ import { tap } from 'rxjs/operators';
 export class AuthService {
   private doctorData: DoctorModel | null = null;
   private loggedIn = new BehaviorSubject<boolean>(this.checkLoginStatus());
-  url = "http://localhost:3000/api/login";
-  url2 = "http://localhost:3000/api/doctores";
+  url = "https://backendjs-dee6d131d346.herokuapp.com/api/login";
+  url2 = "https://backendjs-dee6d131d346.herokuapp.com/api/doctores";
   constructor(
     private http: HttpClient
   ) { }

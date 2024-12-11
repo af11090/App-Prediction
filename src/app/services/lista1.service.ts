@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class Lista1Service {
-  private url = 'http://localhost:3000/api/registros';
+  private url = 'https://backendjs-dee6d131d346.herokuapp.com/api/registros';
   constructor(private http: HttpClient) {}
   // Actualizar(categoria:CategoriaModel,idcategoria:number){
   //   return this.http.put(this.url+'/'+ idcategoria,categoria);

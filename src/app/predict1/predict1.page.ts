@@ -125,13 +125,13 @@ export class Predict1Page implements OnInit {
   constructor(private fb: FormBuilder,private http: HttpClient,private alertController: AlertController,private loadingController: LoadingController,
     private toastController: ToastController,private navCtrl: NavController) {
       this.anemiaForm = this.fb.group({
-        dni: ['22222222', [Validators.required, dniValidator]],
+        dni: ['', [Validators.required, dniValidator]],
         nombre_apellido: ['', [Validators.required, nombreApellidoValidator]],
-        edad: ['6', [Validators.required, Validators.min(6), Validators.max(60)]],
-        peso: ['6', [Validators.required, rangoValidatorFactory('peso')]],
-        altura: ['55', [Validators.required, rangoValidatorFactory('altura')]],
+        edad: ['', [Validators.required, Validators.min(6), Validators.max(60)]],
+        peso: ['', [Validators.required, rangoValidatorFactory('peso')]],
+        altura: ['', [Validators.required, rangoValidatorFactory('altura')]],
         sexo: ['', Validators.required],
-        hmg: ['5', [Validators.required, Validators.min(5), Validators.max(18.5)]],
+        hmg: ['', [Validators.required, Validators.min(5), Validators.max(18.5)]],
       });
     }
     async presentLoading(message: string) {
@@ -158,7 +158,7 @@ export class Predict1Page implements OnInit {
   onDniSearch() {
     const dni = this.anemiaForm.get('dni')?.value;
     if (dni) {
-      this.http.get(`http://localhost:3000/api/pacientesdni/${dni}`).subscribe({
+      this.http.get(`https://backendjs-dee6d131d346.herokuapp.com/api/pacientesdni/${dni}`).subscribe({
         next: (data: any) => {
           if (data) {
             console.log(data);
@@ -257,7 +257,7 @@ export class Predict1Page implements OnInit {
       };
 
       this.presentLoading('Procesando predicción...').then(loading => {
-        this.http.post('http://localhost:5000/predict/modelo1', payload).pipe(
+        this.http.post('https://prediccion-2003eb2533aa.herokuapp.com/predict/modelo1', payload).pipe(
           switchMap((response: any) => {
             this.prediccion = response.prediccion;
             this.presentToast('Predicción completada');
@@ -317,7 +317,7 @@ export class Predict1Page implements OnInit {
                         id_paciente:this.pacienteId,
                         diagnostico: this.prediccion || '',
                       };
-                    this.http.post('http://localhost:3000/api/registros', input_data2, { headers }).subscribe({
+                    this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/registros', input_data2, { headers }).subscribe({
                       complete: () => {
                         this.presentToast('Registro completado');
                         this.anemiaForm.reset(); // Limpia los campos del formulario después de que los datos se hayan guardado
@@ -367,8 +367,8 @@ export class Predict1Page implements OnInit {
 
                         // Mostrar el prompt en la consola
                         console.log(prompt);
-                        const chatGptRequest = this.http.post('http://localhost:3000/api/chatgpt', { prompt });
-                        const imageRequest = this.http.post('http://localhost:3000/api/generar-imagen1', { prompt2 });
+                        const chatGptRequest = this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/chatgpt', { prompt });
+                        const imageRequest = this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/generar-imagen1', { prompt2 });
                         forkJoin([chatGptRequest, imageRequest]).pipe(
                           switchMap(([chatGptResponse, imageResponse]: [any, any]) => {
                             this.chatGptMessage = chatGptResponse.completion;
@@ -379,7 +379,7 @@ export class Predict1Page implements OnInit {
                               mediaUrl: imageUrl,
                             };
 
-                            return this.http.post('http://localhost:3002/send', payloadWhatsApp, { responseType: 'text' });
+                            return this.http.post('https://servers-cbc5f59fd554.herokuapp.com/send', payloadWhatsApp, { responseType: 'text' });
                           })
                         ).subscribe({
                           next: (response) => {
@@ -410,7 +410,7 @@ export class Predict1Page implements OnInit {
               Peso: this.anemiaForm.value.peso,
               Altura: this.anemiaForm.value.altura,
               Sexo: this.anemiaForm.value.sexo === 'M' ? 'M' : 'F',
-              hmg: this.anemiaForm.value.hmg,
+              Hmg: this.anemiaForm.value.hmg,
               Fecha: new Date().toISOString().split('T')[0],
               Hora: new Date().toTimeString().split(' ')[0],
               Tipo_prediccion: 1,
@@ -420,7 +420,7 @@ export class Predict1Page implements OnInit {
               diagnostico: this.chatGptMessage || '',
             };
 
-            return this.http.post('http://localhost:3000/api/registros', input_data2, { headers });
+            return this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/registros', input_data2, { headers });
           })
         ).subscribe({
           complete: () => {

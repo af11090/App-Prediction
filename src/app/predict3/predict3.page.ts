@@ -121,7 +121,7 @@ export class Predict3Page implements OnInit {
   constructor(private fb: FormBuilder,private http: HttpClient,private alertController: AlertController,private loadingController: LoadingController,
     private toastController: ToastController,private navCtrl: NavController) {
       this.anemiaForm = this.fb.group({
-        dni: ['22222222', [Validators.required, dniValidator]],
+        dni: ['', [Validators.required, dniValidator]],
         nombre_apellido: ['', [Validators.required, nombreApellidoValidator]],
         edad: ['', [Validators.required, Validators.min(6), Validators.max(60)]],
         peso: ['', [Validators.required, rangoValidatorFactory('peso')]],
@@ -198,7 +198,7 @@ export class Predict3Page implements OnInit {
           });
           
           // Continue with API call only if patient is found in localStorage
-          this.http.get(`http://localhost:3000/api/pacientesdni/${dni}`).subscribe({
+          this.http.get(`https://backendjs-dee6d131d346.herokuapp.com/api/pacientesdni/${dni}`).subscribe({
             next: (data: any) => {
               if (data) {
                 this.pacienteId = data.id_paciente;
@@ -277,7 +277,7 @@ export class Predict3Page implements OnInit {
       };
 
       this.presentLoading('Procesando predicción...').then(loading => {
-        this.http.post('http://localhost:5000/predict/modelo3', payload).pipe(
+        this.http.post('https://prediccion-2003eb2533aa.herokuapp.com/predict/modelo3', payload).pipe(
           switchMap((response: any) => {
             this.prediccion = response.prediccion;
             this.presentToast('Predicción completada');
@@ -335,7 +335,7 @@ export class Predict3Page implements OnInit {
                         id_paciente:this.pacienteId,
                         diagnostico: this.prediccion || ''
                       };
-                    this.http.post('http://localhost:3000/api/registros', input_data2, { headers }).subscribe({
+                    this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/registros', input_data2, { headers }).subscribe({
                       complete: () => {
                         this.presentToast('Registro completado');
                         this.anemiaForm.reset(); // Limpia los campos del formulario después de que los datos se hayan guardado
@@ -385,8 +385,8 @@ export class Predict3Page implements OnInit {
 
                         // Mostrar el prompt en la consola
                         console.log(prompt);
-                        const chatGptRequest = this.http.post('http://localhost:3000/api/chatgpt1', { prompt });
-                        const imageRequest = this.http.post('http://localhost:3000/api/generar-imagen1', { prompt2 });
+                        const chatGptRequest = this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/chatgpt', { prompt });
+                        const imageRequest = this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/generar-imagen1', { prompt2 });
                         forkJoin([chatGptRequest, imageRequest]).pipe(
                           switchMap(([chatGptResponse, imageResponse]: [any, any]) => {
                             this.chatGptMessage = chatGptResponse.completion;
@@ -397,7 +397,7 @@ export class Predict3Page implements OnInit {
                               mediaUrl: imageUrl,
                             };
 
-                            return this.http.post('http://localhost:3002/send', payloadWhatsApp, { responseType: 'text' });
+                            return this.http.post('https://servers-cbc5f59fd554.herokuapp.com/send', payloadWhatsApp, { responseType: 'text' });
                           })
                         ).subscribe({
                           next: (response) => {
@@ -440,7 +440,7 @@ export class Predict3Page implements OnInit {
               id_paciente:this.pacienteId,
               diagnostico: this.chatGptMessage || ''
             };
-            return this.http.post('http://localhost:3000/api/registroS', input_data2, { headers });
+            return this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/registroS', input_data2, { headers });
           })
         ).subscribe({
           complete: () => {

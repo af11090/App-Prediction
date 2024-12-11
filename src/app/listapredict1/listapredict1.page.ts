@@ -29,7 +29,7 @@ export class Listapredict1Page implements OnInit {
   }
 
   obtenerDatos() {
-    // this.http.get<any[]>('http://localhost:3000/api/registros2/1').subscribe({
+    // this.http.get<any[]>('https://backendjs-dee6d131d346.herokuapp.com/api/registros2/1').subscribe({
     //   next: (data) => {
     //     this.datos = data.map(item => ({
     //       ...item,
@@ -41,7 +41,7 @@ export class Listapredict1Page implements OnInit {
     //     this.updatePaginatedDatos();
     //     console.log('Datos recibidos:', this.datos);
     //     // const requests = data.map(item => {
-    //     //   return this.http.get<any>(`http://localhost:3000/api/pacientesid/${item.id_paciente}`).pipe(
+    //     //   return this.http.get<any>(`https://backendjs-dee6d131d346.herokuapp.com/api/pacientesid/${item.id_paciente}`).pipe(
     //     //     map(paciente => ({
     //     //       ...item,
     //     //       dni: paciente?.dni || 'N/A', // Agrega el DNI del paciente o 'N/A' si no está definido
@@ -56,10 +56,10 @@ export class Listapredict1Page implements OnInit {
     //     console.error('Error al obtener los datos', error);
     //   }
     // });
-    this.http.get<any[]>('http://localhost:3000/api/registros2/1').subscribe({
+    this.http.get<any[]>('https://backendjs-dee6d131d346.herokuapp.com/api/registros2/1').subscribe({
       next: (data) => {
         const requests = data.map(item =>
-          this.http.get<any>(`http://localhost:3000/api/pacientes/${item.id_paciente}`).pipe(
+          this.http.get<any>(`https://backendjs-dee6d131d346.herokuapp.com/api/pacientes/${item.id_paciente}`).pipe(
             map(paciente => ({
               ...item,
               DNI: paciente?.DNI || 'N/A', // Agrega el DNI del paciente o 'N/A' si no está definido

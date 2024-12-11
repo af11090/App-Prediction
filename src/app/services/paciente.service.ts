@@ -9,7 +9,7 @@ import { PacienteModel } from '../models/paciente.model';
 })
 export class PacienteService {
   
-  url = "http://localhost:3000/api/pacientes";
+  url = "https://backendjs-dee6d131d346.herokuapp.com/api/pacientes";
 
   constructor(private http: HttpClient) { }
 

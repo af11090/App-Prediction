@@ -17,25 +17,51 @@ export class Tab2Page implements OnInit {
   maxHmg: number = 0;
 
   filtroTiempo: CustomSegmentValue = 'día';
+  filtroGenero: string = 'todos'; // Agregar esta propiedad
   tendenciaAnemiaChart: any;
   tendenciaGeneroChart: any;
   prediccionesChart: any;
   chartAnemia: any;
   chartTipo: any;
   chartSeveridad: any;
+  meses: { valor: string, texto: string }[] = [];
+  mesSeleccionado: string = '';
 
   constructor(private http: HttpClient) {
     Chart.register(...registerables);
   }
 
   ngOnInit() {
+    const fechaActual = moment();
+    this.mesSeleccionado = `${fechaActual.year()}-${String(fechaActual.month() + 1).padStart(2, '0')}`;
+    this.generarMeses();
     this.obtenerDatos();
     this.obtenerPrediccionesPorTipo();
     this.obtenerEstadisticas();
   }
 
+  generarMeses() {
+    const mesesTexto = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    
+    // Generar opciones para el año actual y el siguiente
+    const añoActual = moment().year();
+    const meses = [];
+    
+    for (let año = añoActual; año <= añoActual + 1; año++) {
+      for (let mes = 0; mes < 12; mes++) {
+        meses.push({
+          valor: `${año}-${String(mes + 1).padStart(2, '0')}`,
+          texto: `${mesesTexto[mes]} ${año}`
+        });
+      }
+    }
+    
+    this.meses = meses;
+  }
+
   obtenerDatos() {
-    this.http.get<any[]>('http://localhost:3000/api/registros').subscribe({
+    this.http.get<any[]>('https://backendjs-dee6d131d346.herokuapp.com/api/registros').subscribe({
       next: (data) => {
         console.log('Datos obtenidos', data);
         // const datosLimpios = data
@@ -59,7 +85,7 @@ export class Tab2Page implements OnInit {
   }
 
   obtenerPrediccionesPorTipo() {
-    this.http.get<any[]>('http://localhost:3000/api/predicciones-tipo').subscribe({
+    this.http.get<any[]>('https://backendjs-dee6d131d346.herokuapp.com/api/predicciones-tipo').subscribe({
       next: (data) => {
         console.log('Datos de predicciones:', data);
         this.crearGraficoPredicciones(data);
@@ -71,7 +97,7 @@ export class Tab2Page implements OnInit {
   }
 
   obtenerEstadisticas() {
-    this.http.get<any>('http://localhost:3000/api/estadisticas-tipo').subscribe({
+    this.http.get<any>('https://backendjs-dee6d131d346.herokuapp.com/api/estadisticas-tipo').subscribe({
       next: (data) => {
         this.crearGraficoAnemia(data.anemia);
         this.crearGraficoTipo(data.tipo);
@@ -101,14 +127,35 @@ export class Tab2Page implements OnInit {
   }
 
   crearTendenciaAnemiaChart(data: any[]) {
-    // Filtrar registros que tengan Hmg
-    const datosValidos = data.filter(p => p.Hmg !== null);
-    
-    // Crear array de fechas (usando el id_registro como referencia temporal si no hay fecha)
-    let fechas = datosValidos.map(p => p.id_registro);
-    let hmgValues = datosValidos.map(p => parseFloat(p.Hmg));
+    // Filtrar por género y mes seleccionado
+    let datosFiltrados = data.filter(registro => {
+      if (!registro.Fecha) return false;
+      
+      const fechaRegistro = moment(registro.Fecha);
+      const [year, month] = this.mesSeleccionado.split('-');
+      
+      return fechaRegistro.isValid() && 
+             fechaRegistro.year() === parseInt(year) && 
+             (fechaRegistro.month() + 1) === parseInt(month);
+    });
 
-    const agrupadoPorTiempo = this.agruparPorTiempo(fechas, hmgValues, this.filtroTiempo);
+    if (this.filtroGenero !== 'todos') {
+      datosFiltrados = datosFiltrados.filter(p => p.Sexo === this.filtroGenero);
+    }
+
+    // Ordenar por fecha
+    datosFiltrados.sort((a, b) => moment(a.Fecha).diff(moment(b.Fecha)));
+
+    // Mapear datos para el gráfico
+    const fechas = datosFiltrados.map(p => moment(p.Fecha).format('DD/MM/YYYY'));
+    const hmgValues = datosFiltrados.map(p => parseFloat(p.Hmg || 0));
+
+    console.log('Datos filtrados:', {
+      mesSeleccionado: this.mesSeleccionado,
+      totalRegistros: datosFiltrados.length,
+      fechas,
+      hmgValues
+    });
 
     if (this.tendenciaAnemiaChart) {
       this.tendenciaAnemiaChart.destroy();
@@ -117,12 +164,13 @@ export class Tab2Page implements OnInit {
     this.tendenciaAnemiaChart = new Chart('tendenciaAnemiaChart', {
       type: 'line',
       data: {
-        labels: agrupadoPorTiempo.map(entry => `Registro ${entry.label}`),
+        labels: fechas,
         datasets: [{
           label: 'Nivel de Hemoglobina',
-          data: agrupadoPorTiempo.map(entry => entry.value),
+          data: hmgValues,
           borderColor: '#3cba9f',
-          fill: false
+          fill: false,
+          tension: 0.1
         }]
       },
       options: {
@@ -134,6 +182,18 @@ export class Tab2Page implements OnInit {
               display: true,
               text: 'Nivel de Hemoglobina (g/dL)'
             }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Fecha'
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            mode: 'index',
+            intersect: false
           }
         }
       }
@@ -358,24 +418,35 @@ export class Tab2Page implements OnInit {
     });
   }
 
-  agruparPorTiempo(ids: number[], valores: number[], filtro: CustomSegmentValue) {
-    // Simplificar el agrupamiento ya que no tenemos fechas reales
+  agruparPorTiempo(fechas: Date[], valores: number[], filtro: CustomSegmentValue) {
     const agrupado: { [key: string]: { sum: number, count: number } } = {};
-
-    ids.forEach((id, index) => {
-      // Usar el ID como etiqueta
-      const label = id.toString();
-      if (!agrupado[label]) {
-        agrupado[label] = { sum: 0, count: 0 };
+    
+    fechas.forEach((fecha, index) => {
+      let key = moment(fecha).startOf(this.mapearFiltro(filtro)).format('YYYY-MM-DD');
+      
+      if (!agrupado[key]) {
+        agrupado[key] = { sum: 0, count: 0 };
       }
-      agrupado[label].sum += valores[index];
-      agrupado[label].count += 1;
+      agrupado[key].sum += valores[index];
+      agrupado[key].count += 1;
     });
 
-    return Object.keys(agrupado).map(label => ({
-      label,
-      value: agrupado[label].sum / agrupado[label].count
-    }));
+    return Object.entries(agrupado)
+      .map(([fecha, datos]) => ({
+        label: fecha,
+        value: datos.sum / datos.count
+      }))
+      .sort((a, b) => moment(a.label).diff(moment(b.label)));
+  }
+
+  mapearFiltro(filtro: CustomSegmentValue): moment.unitOfTime.StartOf {
+    switch (filtro) {
+      case 'día': return 'day';
+      case 'semana': return 'week';
+      case 'mes': return 'month';
+      case 'año': return 'year';
+      default: return 'day';
+    }
   }
 
   cambiarFiltro(filtro: any) {
@@ -384,5 +455,15 @@ export class Tab2Page implements OnInit {
       this.filtroTiempo = filtroStr as CustomSegmentValue;
       this.obtenerDatos();
     }
+  }
+
+  cambiarGenero(evento: any) {
+    this.filtroGenero = evento.detail.value;
+    this.obtenerDatos();
+  }
+
+  cambiarMes(evento: any) {
+    this.mesSeleccionado = evento.detail.value;
+    this.obtenerDatos();
   }
 }
