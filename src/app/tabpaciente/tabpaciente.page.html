@@ -1,0 +1,56 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>
+      <ion-icon name="people-outline" class="ion-margin-end"></ion-icon>
+      Gestión de Pacientes
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openAddPacienteModal()" class="add-button">
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        Nuevo Paciente
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-searchbar
+    [(ngModel)]="searchTerm"
+    (ionInput)="searchPatients()"
+    placeholder="Buscar por nombre o DNI"
+    animated="true"
+    mode="ios">
+  </ion-searchbar>
+
+  <ion-list>
+    <ion-item *ngFor="let patient of filteredPatients" lines="none" class="patient-card">
+  
+      <ion-label>
+        <h2>{{ patient.Nombres }} {{ patient.Apellidos }}</h2>
+        <p>
+          <ion-icon name="card-outline"></ion-icon>
+          DNI: {{ patient.DNI }}
+        </p>
+        <p>
+          <ion-icon name="person-outline"></ion-icon>
+          Sexo: {{ patient.Sexo === 'M' ? 'Masculino' : 'Femenino' }}
+        </p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button (click)="editPatient(patient)" fill="clear" color="primary">
+          <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button (click)="deletePatient(patient.id_paciente)" fill="clear" color="danger">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+
+  <!-- Mensaje cuando no hay resultados -->
+  <div class="no-results" *ngIf="filteredPatients.length === 0">
+    <ion-icon name="search-outline" size="large"></ion-icon>
+    <h3>No se encontraron pacientes</h3>
+    <p>Intenta con otros términos de búsqueda</p>
+  </div>
+</ion-content>

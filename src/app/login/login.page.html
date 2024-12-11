@@ -1,0 +1,102 @@
+<ion-content>
+  <ion-segment [(ngModel)]="segment" class="segment-custom">
+    <ion-segment-button value="login">
+      <ion-label>Iniciar Sesión</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="register">
+      <ion-label>Registrar</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-card class="form-card">
+    <div class="form-container" [ngClass]="{'fade-in': segment === 'login'}" *ngIf="segment === 'login'" >
+      <form [formGroup]="formLogin" >
+        <div class="center-content">
+          <ion-img src="assets/login.svg" class="segment-icon"></ion-img>
+        </div>
+        <ion-item>
+          <ion-label position="floating">DNI</ion-label>
+          <ion-input formControlName="dni" name="dni"></ion-input>
+        </ion-item>
+        <div *ngIf="formLogin.get('dni')?.invalid && formLogin.get('dni')?.touched" class="error-message">
+          <ion-text color="danger" *ngIf="formLogin.get('dni')?.errors?.['required']">El DNI es obligatorio.</ion-text>
+          <ion-text color="danger" *ngIf="formLogin.get('dni')?.errors?.['minlength']">El DNI debe tener al menos 8 caracteres. </ion-text>
+        </div>
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" formControlName="password" name="password"></ion-input>
+        </ion-item>
+        <div *ngIf="formLogin.get('password')?.invalid && formLogin.get('password')?.touched" class="error-message">
+          <ion-text color="danger" *ngIf="formLogin.get('password')?.errors?.['required']">La contraseña es obligatoria.</ion-text>
+          <ion-text color="danger" *ngIf="formLogin.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres. </ion-text>
+        </div>
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+        <ion-button expand="full" (click)="iniciar()">Iniciar Sesión</ion-button>
+      </form>
+    </div>
+
+    <!-- Formulario de Registro -->
+
+    <div class="form-container" [ngClass]="{'fade-in': segment === 'register'}" *ngIf="segment === 'register'">
+      <form [formGroup]="formRegistro">
+        <div class="center-content">
+          <ion-img src="assets/login.svg" class="segment-icon"></ion-img>
+        </div>
+        <ion-item>
+          <ion-label position="floating">DNI</ion-label>
+          <ion-input type="text" formControlName="DNI"></ion-input>
+        </ion-item>
+        <div *ngIf="formRegistro.get('DNI')?.invalid && formRegistro.get('DNI')?.touched" class="error-message">
+          <ion-text color="danger" *ngIf="formRegistro.get('DNI')?.errors?.['required']">El DNI es obligatorio. </ion-text>
+          <ion-text color="danger" *ngIf="formRegistro.get('DNI')?.errors?.['minlength']">El DNI debe tener al menos 8 caracteres. </ion-text>
+        </div>
+        <ion-item>
+          <ion-label position="floating">Nombres</ion-label>
+          <ion-input type="text" formControlName="Nombres"></ion-input>
+        </ion-item>
+        <div *ngIf="formRegistro.get('Nombres')?.invalid && formRegistro.get('Nombres')?.touched" class="error-message">
+          <ion-text color="danger" >El nombre es obligatorio.</ion-text>
+        </div>
+        <ion-item>
+          <ion-label position="floating">Apellidos</ion-label>
+          <ion-input type="text" formControlName="Apellidos"></ion-input>
+        </ion-item>
+        <div *ngIf="formRegistro.get('Apellidos')?.invalid && formRegistro.get('Apellidos')?.touched" class="error-message">
+          <ion-text color="danger">El apellido es obligatorio. </ion-text>
+        </div>
+        <ion-item>
+          <ion-label >Sexo</ion-label>
+          <ion-select formControlName="Sexo">
+            <ion-select-option value="M">Masculino</ion-select-option>
+            <ion-select-option value="F">Femenino</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <div *ngIf="formRegistro.get('Sexo')?.invalid && formRegistro.get('Sexo')?.touched" class="error-message">
+          <ion-text color="danger">El sexo es obligatorio. </ion-text>
+        </div>
+        <ion-item>
+          <ion-label position="floating">Correo</ion-label>
+          <ion-input type="email" formControlName="Correo"></ion-input>
+        </ion-item>
+        <div *ngIf="formRegistro.get('Correo')?.invalid && formRegistro.get('Correo')?.touched" class="error-message">
+          <ion-text color="danger" *ngIf="formRegistro.get('Correo')?.errors?.['required']">El correo es obligatorio. </ion-text>
+          <ion-text color="danger" *ngIf="formRegistro.get('Correo')?.errors?.['email']">Ingrese un correo válido. </ion-text>
+        </div>
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" formControlName="Password"></ion-input>
+        </ion-item>
+        <div *ngIf="formRegistro.get('Password')?.invalid && formRegistro.get('Password')?.touched" class="error-message">
+          <ion-text color="danger" *ngIf="formRegistro.get('Password')?.errors?.['required']">La contraseña es obligatoria. </ion-text>
+          <ion-text color="danger" *ngIf="formRegistro.get('Password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres. </ion-text>
+        </div>
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+        <ion-button expand="full" type="submit" (click)="registrar()">Registrar</ion-button>
+      </form>
+    </div>
+  </ion-card>
+</ion-content>

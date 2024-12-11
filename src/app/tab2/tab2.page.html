@@ -1,0 +1,94 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Reportes Generales</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Reportes</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Resumen Textual -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Resumen de Hemoglobina</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Número total de predicciones: {{ totalPacientes }}</p>
+      <p>Promedio de Hemoglobina: {{ promedioHmg }}</p>
+      <p>Nivel mínimo de Hemoglobina: {{ minHmg }}</p>
+      <p>Nivel máximo de Hemoglobina: {{ maxHmg }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Filtros -->
+  <ion-card>
+    <ion-card-content>
+
+      <ion-item>
+        <ion-label>Mes</ion-label>
+        <ion-select [(ngModel)]="mesSeleccionado" (ionChange)="cambiarMes($event)">
+          <ion-select-option *ngFor="let mes of meses" [value]="mes.valor">
+            {{mes.texto}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Gráfico de tendencia de hemoglobina -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Tendencia de Anemia por Nivel de Hemoglobina</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <canvas id="tendenciaAnemiaChart"></canvas>
+    </ion-card-content>
+  </ion-card>
+
+
+
+  <!-- Distribución por Tipo de Predicción -->
+  <!-- <ion-card>
+    <ion-card-header>
+      <ion-card-title>Distribución por Tipo de Predicción</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <canvas id="prediccionesChart"></canvas>
+    </ion-card-content>
+  </ion-card> -->
+
+  <!-- Gráfico Predicción Antropométrica -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Predicción de anemia general</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <canvas id="chartAnemia"></canvas>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Gráfico Predicción por Hemograma -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Predicción por tipo de anemia</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <canvas id="chartTipo"></canvas>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Gráfico Predicción Completa -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Predicción por sereridad de anemia</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <canvas id="chartSeveridad"></canvas>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
