@@ -157,7 +157,7 @@ export class Predict3Page implements OnInit {
 
   async presentNotFoundAlert() {
     const alert = await this.alertController.create({
-      header: 'Paciente no encontrado',
+      header: 'Acción requerida',
       message: 'Primero debe realizar la predicción inicial para verificar si el paciente tiene anemia.',
       cssClass: 'custom-alert',
       buttons: [
