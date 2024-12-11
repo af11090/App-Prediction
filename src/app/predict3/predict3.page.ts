@@ -5,7 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { switchMap } from 'rxjs/operators';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 
  // // Funciones de validación personalizadas
 export function dniValidator(control: AbstractControl): ValidationErrors | null {
@@ -224,20 +224,20 @@ export class Predict3Page implements OnInit {
       //   return;
       // }
 
-      // const input_data2 = {
-      //   dni: this.anemiaForm.value.dni,
-      //   nombre_apellido: this.anemiaForm.value.nombre_apellido,
-      //   edad: this.anemiaForm.value.edad,
-      //   peso: this.anemiaForm.value.peso,
-      //   altura: this.anemiaForm.value.altura,
-      //   sexo: this.anemiaForm.value.sexo === 'M' ? 'M' : 'F',
-      //   hmg: this.anemiaForm.value.hmg,
-      //   fecha: new Date().toISOString().split('T')[0],
-      //   hora: new Date().toTimeString().split(' ')[0],
-      //   tipo_prediccion: 1,
-      //   resultado: this.prediccion || '',
-      //   paciente_id: 1
-      // };
+      const input_data2 = {
+        dni: this.anemiaForm.value.dni,
+        nombre_apellido: this.anemiaForm.value.nombre_apellido,
+        edad: this.anemiaForm.value.edad,
+        peso: this.anemiaForm.value.peso,
+        altura: this.anemiaForm.value.altura,
+        sexo: this.anemiaForm.value.sexo === 'M' ? 'M' : 'F',
+        hmg: this.anemiaForm.value.hmg,
+        fecha: new Date().toISOString().split('T')[0],
+        hora: new Date().toTimeString().split(' ')[0],
+        tipo_prediccion: 3,
+        resultado: this.prediccion || '',
+        paciente_id: 1
+      };
 
       this.presentLoading('Procesando predicción...').then(loading => {
         this.http.post('http://localhost:5000/predict/modelo3', payload).pipe(
@@ -245,25 +245,25 @@ export class Predict3Page implements OnInit {
             this.prediccion = response.prediccion;
             this.presentToast('Predicción completada');
             loading.dismiss();
-            // Recuperar los datos del doctor desde localStorage
-            // const doctorData = JSON.parse(localStorage.getItem('doctorData') || '{}');
-            // const nombreDoctor = doctorData.nombreDoctor || '';
+            //Recuperar los datos del doctor desde localStorage
+            const doctorData = JSON.parse(localStorage.getItem('doctorData') || '{}');
+            const nombreDoctor = doctorData.nombreDoctor || '';
 
-            // Prompt para mensaje de WhatsApp
-            // const prompt = `
-            //   DNI: ${input_data2.dni}
-            //   Nombre y Apellido: ${input_data2.nombre_apellido}
-            //   Edad: ${input_data2.edad}
-            //   Peso: ${input_data2.peso}
-            //   Altura: ${input_data2.altura}
-            //   Sexo: ${input_data2.sexo}
-            //   HMG: ${input_data2.hmg}
-            //   Fecha: ${input_data2.fecha}
-            //   Hora: ${input_data2.hora}
-            //   Tipo de Predicción: ${input_data2.tipo_prediccion}
-            //   Resultado: ${input_data2.resultado}
-            //   Nombre del Doctor: ${nombreDoctor}
-            // `;
+            //Prompt para mensaje de WhatsApp
+            const prompt = `
+              DNI: ${input_data2.dni}
+              Nombre y Apellido: ${input_data2.nombre_apellido}
+              Edad: ${input_data2.edad}
+              Peso: ${input_data2.peso}
+              Altura: ${input_data2.altura}
+              Sexo: ${input_data2.sexo}
+              HMG: ${input_data2.hmg}
+              Fecha: ${input_data2.fecha}
+              Hora: ${input_data2.hora}
+              Tipo de Predicción: ${input_data2.tipo_prediccion}
+              Resultado: ${input_data2.resultado}
+              Nombre del Doctor: ${nombreDoctor}
+            `;
 
             return new Observable<void>((observer) => {
               this.alertController.create({
@@ -303,97 +303,98 @@ export class Predict3Page implements OnInit {
                     });
                   }},
                   { text: 'Enviar', handler: (data) => {
-                      // this.presentLoading('Enviando a WhatsApp...').then(loading => {
-                      //   //contrucción de la solicitud para la imagen
-                      //   // Determinar el género
-                      //   const genero = this.anemiaForm.value.sexo === 'M' ? 'male' : 'female';
-                      //   console.log(genero);
-                      //   // Calcular la edad en años o meses
-                      //   const edadMeses = this.anemiaForm.value.edad;
-                      //   let rango = 'months';
-                      //   let age = edadMeses;
-                      //   let descriptor = 'baby';
+                      this.presentLoading('Enviando a WhatsApp...').then(loading => {
+                        //contrucción de la solicitud para la imagen
+                        // Determinar el género
+                        const genero = this.anemiaForm.value.sexo === 'M' ? 'male' : 'female';
+                        console.log(genero);
+                        // Calcular la edad en años o meses
+                        const edadMeses = this.anemiaForm.value.edad;
+                        let rango = 'months';
+                        let age = edadMeses;
+                        let descriptor = 'baby';
 
-                      //   if (edadMeses >= 24) {
-                      //     age = Math.floor(edadMeses / 12); // Convertir a años sin decimales
-                      //     rango = 'years';
-                      //     descriptor = genero === 'female' ? 'girl' : 'boy';
-                      //   }
+                        if (edadMeses >= 24) {
+                          age = Math.floor(edadMeses / 12); // Convertir a años sin decimales
+                          rango = 'years';
+                          descriptor = genero === 'female' ? 'girl' : 'boy';
+                        }
 
-                      //   // Determinar la expresión
-                      //   const expression = this.prediccion && this.prediccion.toLowerCase() === 'no tiene anemia' ? 'happy' : 'sad';
+                        // Determinar la expresión
+                        const expression = this.prediccion && this.prediccion.toLowerCase() === 'no tiene anemia' ? 'happy' : 'sad';
 
-                      //   // Determinar los signos
-                      //   let signos = 'happy';
-                      //   if (this.prediccion && this.prediccion.toLowerCase() !== 'no tiene anemia') {
-                      //     signos = this.prediccion.toLowerCase();
-                      //   }
+                        // Determinar los signos
+                        let signos = 'happy';
+                        if (this.prediccion && this.prediccion.toLowerCase() !== 'no tiene anemia') {
+                          signos = this.prediccion.toLowerCase();
+                        }
 
-                      //   // Determinar la complexión
-                      //   const complexion = this.prediccion && this.prediccion.toLowerCase() === 'no tiene anemia' ? 'happy' : 'pale';
+                        // Determinar la complexión
+                        const complexion = this.prediccion && this.prediccion.toLowerCase() === 'no tiene anemia' ? 'happy' : 'pale';
 
-                      //   // Determinar el fondo
-                      //   const background = this.prediccion && this.prediccion.toLowerCase() === 'no tiene anemia' ? 'cheerful' : 'nostalgic';
+                        // Determinar el fondo
+                        const background = this.prediccion && this.prediccion.toLowerCase() === 'no tiene anemia' ? 'cheerful' : 'nostalgic';
 
-                      //   // Construir el prompt
-                      //   const prompt2 = `
-                      //   A hyper-realistic photograph of a ${age}-${rango}-old ${descriptor} ${genero} with a ${expression} expression on his ${complexion} face, reflecting signs of ${signos}. The background is ${background}, and the details are in high resolution. The ${descriptor} ${genero} is wearing clothes.
-                      //   `;
+                        // Construir el prompt
+                        const prompt2 = `
+                        A hyper-realistic photograph of a ${age}-${rango}-old ${descriptor} ${genero} with a ${expression} expression on his ${complexion} face, reflecting signs of ${signos}. The background is ${background}, and the details are in high resolution. The ${descriptor} ${genero} is wearing clothes.
+                        `;
 
-                      //   // Mostrar el prompt en la consola
-                      //   console.log(prompt2);
-                      //   const chatGptRequest = this.http.post('https://www.piscina.software/3000/api/chatgpt', { prompt });
-                      //   const imageRequest = this.http.post('https://www.piscina.software/3000/api/generar-imagen', { prompt2 });
-                      //   forkJoin([chatGptRequest, imageRequest]).pipe(
-                      //     switchMap(([chatGptResponse, imageResponse]: [any, any]) => {
-                      //       const chatGptMessage = chatGptResponse.completion;
-                      //       const imageUrl = imageResponse.imageUrl;
-                      //       const payloadWhatsApp = {
-                      //         phone: '51'+ data.numero,
-                      //         message: chatGptMessage,
-                      //         mediaUrl: imageUrl,
-                      //       };
+                        // Mostrar el prompt en la consola
+                        console.log(prompt2);
+                        const chatGptRequest = this.http.post('http://localhost:3000/api/chatgpt', { prompt });
+                        const imageRequest = this.http.post('http://localhost:3000/api/generar-imagen', { prompt2 });
+                        forkJoin([chatGptRequest, imageRequest]).pipe(
+                          switchMap(([chatGptResponse, imageResponse]: [any, any]) => {
+                            const chatGptMessage = chatGptResponse.completion;
+                            const imageUrl = imageResponse.imageUrl;
+                            const payloadWhatsApp = {
+                              phone: '51'+ data.numero,
+                              message: chatGptMessage,
+                              mediaUrl: imageUrl,
+                            };
 
-                      //       return this.http.post('https://www.piscina.software/3002/send', payloadWhatsApp, { responseType: 'text' });
-                      //     })
-                      //   ).subscribe({
-                      //     next: (response) => {
-                      //       this.presentToast('Mensaje enviado a WhatsApp');
-                      //       loading.dismiss();
-                      //       observer.next();
-                      //       observer.complete();
-                      //     },
-                      //     error: (err) => {
-                      //       this.presentToast('Error al enviar a WhatsApp');
-                      //       loading.dismiss();
-                      //       observer.error(err);
-                      //     }
-                      //   });
-                      // });
+                            return this.http.post('http://localhost:3002/send', payloadWhatsApp, { responseType: 'text' });
+                          })
+                        ).subscribe({
+                          next: (response) => {
+                            this.presentToast('Mensaje enviado a WhatsApp');
+                            loading.dismiss();
+                            observer.next();
+                            observer.complete();
+                          },
+                          error: (err) => {
+                            this.presentToast('Error al enviar a WhatsApp');
+                            loading.dismiss();
+                            observer.error(err);
+                          }
+                        });
+                      });
                     }
                   }
                 ]
               }).then(alert => alert.present());
             });
           }),
-          // switchMap(() => {
-          //   const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-          //   const input_data2 = {
-          //     dni: this.anemiaForm.value.dni,
-          //     nombre_apellido: this.anemiaForm.value.nombre_apellido,
-          //     edad: this.anemiaForm.value.edad,
-          //     peso: this.anemiaForm.value.peso,
-          //     altura: this.anemiaForm.value.altura,
-          //     sexo: this.anemiaForm.value.sexo === 'M' ? 'M' : 'F',
-          //     hmg: this.anemiaForm.value.hmg,
-          //     fecha: new Date().toISOString().split('T')[0],
-          //     hora: new Date().toTimeString().split(' ')[0],
-          //     tipo_prediccion: 1,
-          //     resultado: this.prediccion || '',
-          //     usuario_id: usuarioId
-          //   };
-          //   return this.http.post('https://www.piscina.software/3000/api/registro', input_data2, { headers });
-          // })
+          switchMap(() => {
+            const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+            const input_data2 = {
+              dni: this.anemiaForm.value.dni,
+              nombre_apellido: this.anemiaForm.value.nombre_apellido,
+              Edad: this.anemiaForm.value.edad,
+              Peso: this.anemiaForm.value.peso,
+              Altura: this.anemiaForm.value.altura,
+              Sexo: this.anemiaForm.value.sexo === 'M' ? 'M' : 'F',
+              hmg: this.anemiaForm.value.hmg,
+              Fecha: new Date().toISOString().split('T')[0],
+              Hora: new Date().toTimeString().split(' ')[0],
+              Tipo_prediccion: 3,
+              Estado:1,
+              id_paciente:this.pacienteId,
+              Resultado: this.prediccion || '',
+            };
+            return this.http.post('http://localhost:3000/api/registroS', input_data2, { headers });
+          })
         ).subscribe({
           complete: () => {
             this.presentToast(`Resultado de la predicción: ${this.prediccion}`);
