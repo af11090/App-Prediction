@@ -19,6 +19,10 @@ export class Tab2Page implements OnInit {
   filtroTiempo: CustomSegmentValue = 'día';
   tendenciaAnemiaChart: any;
   tendenciaGeneroChart: any;
+  prediccionesChart: any;
+  chartAnemia: any;
+  chartTipo: any;
+  chartSeveridad: any;
 
   constructor(private http: HttpClient) {
     Chart.register(...registerables);
@@ -26,6 +30,8 @@ export class Tab2Page implements OnInit {
 
   ngOnInit() {
     this.obtenerDatos();
+    this.obtenerPrediccionesPorTipo();
+    this.obtenerEstadisticas();
   }
 
   obtenerDatos() {
@@ -52,45 +58,57 @@ export class Tab2Page implements OnInit {
     });
   }
 
-  // calcularHmg(data: any[]) {
-  //   if (data.length === 0) return;
+  obtenerPrediccionesPorTipo() {
+    this.http.get<any[]>('http://localhost:3000/api/predicciones-tipo').subscribe({
+      next: (data) => {
+        console.log('Datos de predicciones:', data);
+        this.crearGraficoPredicciones(data);
+      },
+      error: (error) => {
+        console.error('Error al obtener predicciones:', error);
+      }
+    });
+  }
 
-  //   const hmgValues = data.map(p => p.hmg).filter(value => !isNaN(value));
-  //   this.promedioHmg = hmgValues.reduce((a, b) => a + b, 0) / hmgValues.length;
-  //   this.minHmg = Math.min(...hmgValues);
-  //   this.maxHmg = Math.max(...hmgValues);
-  // }
+  obtenerEstadisticas() {
+    this.http.get<any>('http://localhost:3000/api/estadisticas-tipo').subscribe({
+      next: (data) => {
+        this.crearGraficoAnemia(data.anemia);
+        this.crearGraficoTipo(data.tipo);
+        this.crearGraficoSeveridad(data.severidad);
+      },
+      error: (error) => console.error('Error:', error)
+    });
+  }
+
   calcularHmg(data: any[]) {
     if (data.length === 0) return;
 
-    const pacientes = data.reduce((acc, item) => {
-      if (!acc[item.id_paciente]) {
-        acc[item.id_paciente] = parseFloat(item.Hmg);
-      }
-      return acc;
-    }, {});
-    console.log('Pacientes', pacientes);
+    const hmgValues = data
+      .filter(item => item.Hmg !== null)
+      .map(item => parseFloat(item.Hmg))
+      .filter(value => !isNaN(value));
 
-    const hmgValues = Object.values(pacientes).filter((value): value is number => !isNaN(value as number));
-
-    this.promedioHmg = hmgValues.reduce((a, b) => a + b, 0) / hmgValues.length;
-    this.minHmg = Math.min(...hmgValues);
-    this.maxHmg = Math.max(...hmgValues);
+    if (hmgValues.length > 0) {
+      this.promedioHmg = hmgValues.reduce((a, b) => a + b, 0) / hmgValues.length;
+      this.minHmg = Math.min(...hmgValues);
+      this.maxHmg = Math.max(...hmgValues);
+    } else {
+      this.promedioHmg = 0;
+      this.minHmg = 0;
+      this.maxHmg = 0;
+    }
   }
 
   crearTendenciaAnemiaChart(data: any[]) {
-    let fechas = data.map(p => p.Fecha);
-    console.log('Fechas', fechas);
-    let hmgValues = data.map(p => p.Hmg);
-    console.log('Hmg', hmgValues);
+    // Filtrar registros que tengan Hmg
+    const datosValidos = data.filter(p => p.Hmg !== null);
+    
+    // Crear array de fechas (usando el id_registro como referencia temporal si no hay fecha)
+    let fechas = datosValidos.map(p => p.id_registro);
+    let hmgValues = datosValidos.map(p => parseFloat(p.Hmg));
 
     const agrupadoPorTiempo = this.agruparPorTiempo(fechas, hmgValues, this.filtroTiempo);
-    console.log('Agrupado por tiempo', agrupadoPorTiempo);
-
-    const labels = agrupadoPorTiempo.map(entry => entry.label);
-    console.log('Labels', labels);
-    const valores = agrupadoPorTiempo.map(entry => entry.value);
-    console .log('Valores', valores);
 
     if (this.tendenciaAnemiaChart) {
       this.tendenciaAnemiaChart.destroy();
@@ -99,10 +117,10 @@ export class Tab2Page implements OnInit {
     this.tendenciaAnemiaChart = new Chart('tendenciaAnemiaChart', {
       type: 'line',
       data: {
-        labels: labels,
+        labels: agrupadoPorTiempo.map(entry => `Registro ${entry.label}`),
         datasets: [{
-          label: 'Tendencia de Hemoglobina',
-          data: valores,
+          label: 'Nivel de Hemoglobina',
+          data: agrupadoPorTiempo.map(entry => entry.value),
           borderColor: '#3cba9f',
           fill: false
         }]
@@ -110,18 +128,11 @@ export class Tab2Page implements OnInit {
       options: {
         responsive: true,
         scales: {
-          x: {
-            display: true,
-            title: {
-              display: true,
-              text: 'Tiempo'
-            }
-          },
           y: {
-            display: true,
+            beginAtZero: true,
             title: {
               display: true,
-              text: 'Nivel de Hemoglobina'
+              text: 'Nivel de Hemoglobina (g/dL)'
             }
           }
         }
@@ -129,20 +140,29 @@ export class Tab2Page implements OnInit {
     });
   }
 
-
   crearTendenciaGeneroChart(data: any[]) {
-    const masculinoData = data.filter(p => p.sexo === 'M');
-    const femeninoData = data.filter(p => p.sexo === 'F');
+    // Filtrar por Sexo (no sexo) y asegurarse que Hmg existe
+    const masculinoData = data.filter(p => p.Sexo === 'M' && p.Hmg !== null);
+    const femeninoData = data.filter(p => p.Sexo === 'F' && p.Hmg !== null);
 
-    const fechasMasculino = masculinoData.map(p => p.fecha);
-    const hmgMasculino = masculinoData.map(p => p.hmg);
-    const fechasFemenino = femeninoData.map(p => p.fecha);
-    const hmgFemenino = femeninoData.map(p => p.hmg);
+    // Usar id_registro como referencia temporal
+    const masculinoAgrupado = this.agruparPorTiempo(
+      masculinoData.map(p => p.id_registro),
+      masculinoData.map(p => parseFloat(p.Hmg || 0)),
+      this.filtroTiempo
+    );
 
-    const agrupadoMasculino = this.agruparPorTiempo(fechasMasculino, hmgMasculino, this.filtroTiempo);
-    const agrupadoFemenino = this.agruparPorTiempo(fechasFemenino, hmgFemenino, this.filtroTiempo);
+    const femeninoAgrupado = this.agruparPorTiempo(
+      femeninoData.map(p => p.id_registro),
+      femeninoData.map(p => parseFloat(p.Hmg || 0)),
+      this.filtroTiempo
+    );
 
-    const labels = agrupadoMasculino.map(entry => entry.label);
+    // Obtener todas las etiquetas únicas
+    const todasLasEtiquetas = [...new Set([
+      ...masculinoAgrupado.map(m => m.label),
+      ...femeninoAgrupado.map(f => f.label)
+    ])].sort();
 
     if (this.tendenciaGeneroChart) {
       this.tendenciaGeneroChart.destroy();
@@ -151,17 +171,23 @@ export class Tab2Page implements OnInit {
     this.tendenciaGeneroChart = new Chart('tendenciaGeneroChart', {
       type: 'line',
       data: {
-        labels: labels,
+        labels: todasLasEtiquetas,
         datasets: [
           {
             label: 'HMG Masculino',
-            data: agrupadoMasculino.map(entry => entry.value),
+            data: todasLasEtiquetas.map(label => {
+              const punto = masculinoAgrupado.find(m => m.label === label);
+              return punto ? punto.value : null;
+            }),
             borderColor: '#36a2eb',
             fill: false
           },
           {
             label: 'HMG Femenino',
-            data: agrupadoFemenino.map(entry => entry.value),
+            data: todasLasEtiquetas.map(label => {
+              const punto = femeninoAgrupado.find(f => f.label === label);
+              return punto ? punto.value : null;
+            }),
             borderColor: '#ff6384',
             fill: false
           }
@@ -174,14 +200,14 @@ export class Tab2Page implements OnInit {
             display: true,
             title: {
               display: true,
-              text: 'Tiempo'
+              text: 'Registro'
             }
           },
           y: {
             display: true,
             title: {
               display: true,
-              text: 'Nivel de Hemoglobina'
+              text: 'Nivel de Hemoglobina (g/dL)'
             }
           }
         }
@@ -189,19 +215,156 @@ export class Tab2Page implements OnInit {
     });
   }
 
-  agruparPorTiempo(fechas: Date[], valores: number[], filtro: CustomSegmentValue) {
-    const formatoTiempo: { [key in CustomSegmentValue]: string } = {
-      'día': 'YYYY-MM-DD',
-      'semana': 'YYYY-[W]WW',
-      'mes': 'YYYY-MM',
-      'año': 'YYYY'
-    };
+  crearGraficoPredicciones(data: any[]) {
+    const tipos = ['Antropométrica', 'Hemograma', 'Completa'];
+    const resultados = ['Si tiene anemia', 'No tiene anemia'];
+    
+    const datasets = resultados.map(resultado => {
+      return {
+        label: resultado,
+        data: tipos.map((_, index) => {
+          const filtrado = data.filter(d => 
+            d.tipo_prediccion === (index + 1) && 
+            d.Resultado === resultado
+          );
+          return filtrado.length > 0 ? filtrado[0].cantidad : 0;
+        }),
+        backgroundColor: resultado === 'Si tiene anemia' ? '#ff6384' : '#36a2eb'
+      };
+    });
 
+    if (this.prediccionesChart) {
+      this.prediccionesChart.destroy();
+    }
+
+    this.prediccionesChart = new Chart('prediccionesChart', {
+      type: 'bar',
+      data: {
+        labels: tipos,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            stacked: true,
+          },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Número de Predicciones'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Predicciones por Tipo'
+          }
+        }
+      }
+    });
+  }
+
+  crearGraficoAnemia(datos: any) {
+    if (this.chartAnemia) this.chartAnemia.destroy();
+    
+    this.chartAnemia = new Chart('chartAnemia', {
+      type: 'bar',
+      data: {
+        labels: ['Peso', 'Altura', 'Hemoglobina'],
+        datasets: [{
+          label: 'Promedios',
+          data: [datos.promedio_peso, datos.promedio_altura, datos.promedio_hmg],
+          backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Estadísticas de Predicción Antropométrica'
+          }
+        }
+      }
+    });
+  }
+
+  crearGraficoTipo(datos: any) {
+    if (this.chartTipo) this.chartTipo.destroy();
+    
+    this.chartTipo = new Chart('chartTipo', {
+      type: 'bar',
+      data: {
+        labels: ['Peso', 'Altura', 'Hmg', 'RBC', 'MCV'],
+        datasets: [{
+          label: 'Promedios',
+          data: [
+            datos.promedio_peso,
+            datos.promedio_altura,
+            datos.promedio_hmg,
+            datos.promedio_rbc,
+            datos.promedio_mcv
+          ],
+          backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56', '#4bc0c0']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Estadísticas de Predicción por Hemograma'
+          }
+        }
+      }
+    });
+  }
+
+  crearGraficoSeveridad(datos: any) {
+    if (this.chartSeveridad) this.chartSeveridad.destroy();
+    
+    this.chartSeveridad = new Chart('chartSeveridad', {
+      type: 'bar',
+      data: {
+        labels: ['Peso', 'Altura', 'Hmg', 'PCV', 'TLC'],
+        datasets: [{
+          label: 'Promedios',
+          data: [
+            datos.promedio_peso,
+            datos.promedio_altura,
+            datos.promedio_hmg,
+            datos.promedio_pcv,
+            datos.promedio_tlc
+          ],
+          backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56', '#4bc0c0']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Estadísticas de Predicción Completa'
+          }
+        }
+      }
+    });
+  }
+
+  agruparPorTiempo(ids: number[], valores: number[], filtro: CustomSegmentValue) {
+    // Simplificar el agrupamiento ya que no tenemos fechas reales
     const agrupado: { [key: string]: { sum: number, count: number } } = {};
-    console.log('Agrupado', agrupado);
 
-    fechas.forEach((fecha, index) => {
-      const label = moment(fecha).format(formatoTiempo[filtro]);
+    ids.forEach((id, index) => {
+      // Usar el ID como etiqueta
+      const label = id.toString();
       if (!agrupado[label]) {
         agrupado[label] = { sum: 0, count: 0 };
       }
