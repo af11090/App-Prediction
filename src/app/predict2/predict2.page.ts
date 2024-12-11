@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -123,16 +122,16 @@ export class Predict2Page implements OnInit {
       this.anemiaForm = this.fb.group({
         dni: ['22222222', [Validators.required, dniValidator]],
         nombre_apellido: ['', [Validators.required, nombreApellidoValidator]],
-        edad: ['6', [Validators.required, Validators.min(6), Validators.max(60)]],
-        peso: ['6', [Validators.required, rangoValidatorFactory('peso')]],
-        altura: ['55', [Validators.required, rangoValidatorFactory('altura')]],
+        edad: ['', [Validators.required, Validators.min(6), Validators.max(60)]],
+        peso: ['', [Validators.required, rangoValidatorFactory('peso')]],
+        altura: ['', [Validators.required, rangoValidatorFactory('altura')]],
         sexo: ['', Validators.required],
-        hmg: ['5', [Validators.required, Validators.min(5), Validators.max(18.5)]],
-        rbc: ['4', [Validators.required, rangoValidator(3.80, 6.10)]],
-        mcv: ['78', [Validators.required, rangoValidator(77, 119)]],
-        mch: ['26', [Validators.required, rangoValidator(25, 36)]],
-        mchc: ['32', [Validators.required, rangoValidator(30, 36)]],
-        rdw: ['12', [Validators.required, rangoValidator(11.50, 14.50)]],
+        hmg: ['', [Validators.required, Validators.min(5), Validators.max(18.5)]],
+        rbc: ['', [Validators.required, rangoValidator(3.80, 6.10)]],
+        mcv: ['', [Validators.required, rangoValidator(77, 119)]],
+        mch: ['', [Validators.required, rangoValidator(25, 36)]],
+        mchc: ['', [Validators.required, rangoValidator(30, 36)]],
+        rdw: ['', [Validators.required, rangoValidator(11.50, 14.50)]],
       });
     }
     async presentLoading(message: string) {
@@ -159,6 +158,25 @@ export class Predict2Page implements OnInit {
   onDniSearch() {
     const dni = this.anemiaForm.get('dni')?.value;
     if (dni) {
+      // First check localStorage
+      const storedData = localStorage.getItem('anemiaPatients');
+      if (storedData) {
+        const patients = JSON.parse(storedData);
+        const patient = patients.find((p: any) => p.dni === dni);
+        
+        if (patient) {
+          this.anemiaForm.patchValue({
+            nombre_apellido: patient.nombre_apellido,
+            edad: patient.edad,
+            peso: patient.peso,
+            altura: patient.altura,
+            sexo: patient.sexo,
+            hmg: patient.hmg
+          });
+        }
+      }
+
+      // Continue with API call
       this.http.get(`http://localhost:3000/api/pacientesdni/${dni}`).subscribe({
         next: (data: any) => {
           if (data) {
@@ -403,6 +421,7 @@ export class Predict2Page implements OnInit {
           })
         ).subscribe({
           complete: () => {
+            this.anemiaForm.reset(); // Limpia los campos del formulario después de que los datos se hayan guardado
             this.presentToast(`Resultado de la predicción: ${this.prediccion}`);
           },
           error: (err) => {

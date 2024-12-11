@@ -123,17 +123,13 @@ export class Predict3Page implements OnInit {
       this.anemiaForm = this.fb.group({
         dni: ['22222222', [Validators.required, dniValidator]],
         nombre_apellido: ['', [Validators.required, nombreApellidoValidator]],
-        edad: ['6', [Validators.required, Validators.min(6), Validators.max(60)]],
-        peso: ['6', [Validators.required, rangoValidatorFactory('peso')]],
-        altura: ['55', [Validators.required, rangoValidatorFactory('altura')]],
+        edad: ['', [Validators.required, Validators.min(6), Validators.max(60)]],
+        peso: ['', [Validators.required, rangoValidatorFactory('peso')]],
+        altura: ['', [Validators.required, rangoValidatorFactory('altura')]],
         sexo: ['', Validators.required],
-        hmg: ['6', [Validators.required, Validators.min(5), Validators.max(18.5)]],
-        pcv: ['30', [Validators.required, rangoValidator(29, 60)]],
-        mcv: ['78', [Validators.required, rangoValidator(77, 119)]],
-        mch: ['26', [Validators.required, rangoValidator(25, 36)]],
-        mchc: ['30', [Validators.required, rangoValidator(30, 36)]],
-        rdw: ['12', [Validators.required, rangoValidator(11.5, 14.5)]],
-        tlc: ['5', [Validators.required, rangoValidator(4.5, 38)]],
+        hmg: ['', [Validators.required, Validators.min(5), Validators.max(18.5)]],
+        pcv: ['', [Validators.required, rangoValidator(29, 60)]],
+        tlc: ['', [Validators.required, rangoValidator(4.5, 38)]],
       });
     }
     async presentLoading(message: string) {
@@ -160,6 +156,23 @@ export class Predict3Page implements OnInit {
   onDniSearch() {
     const dni = this.anemiaForm.get('dni')?.value;
     if (dni) {
+      // First check localStorage
+      const storedData = localStorage.getItem('anemiaPatients');
+      if (storedData) {
+        const patients = JSON.parse(storedData);
+        const patient = patients.find((p: any) => p.dni === dni);
+        
+        if (patient) {
+          this.anemiaForm.patchValue({
+            nombre_apellido: patient.nombre_apellido,
+            edad: patient.edad,
+            peso: patient.peso,
+            altura: patient.altura,
+            sexo: patient.sexo,
+            hmg: patient.hmg
+          });
+        }
+      }
       this.http.get(`http://localhost:3000/api/pacientesdni/${dni}`).subscribe({
         next: (data: any) => {
           if (data) {
@@ -405,6 +418,7 @@ export class Predict3Page implements OnInit {
           })
         ).subscribe({
           complete: () => {
+            this.anemiaForm.reset(); // Limpia los campos del formulario después de que los datos se hayan guardado
             this.presentToast(`Resultado de la predicción: ${this.prediccion}`);
           },
           error: (err) => {

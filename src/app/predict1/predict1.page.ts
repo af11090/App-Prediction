@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -96,6 +95,17 @@ function rangoValidatorFactory(field: 'peso' | 'altura') {
     }
     return null;
   };
+}
+
+interface AnemiaPatient {
+  dni: string;
+  nombre_apellido: string;
+  edad: number;
+  peso: number;
+  altura: number;
+  sexo: string;
+  hmg: number;
+  fecha: string;
 }
 
 @Component({
@@ -199,6 +209,24 @@ export class Predict1Page implements OnInit {
     }
     this.presentToast('Por favor, complete todos los campos requeridos correctamente.');
   }
+
+  saveToLocalStorage(patient: AnemiaPatient) {
+    const storedData = localStorage.getItem('anemiaPatients');
+    let patients: AnemiaPatient[] = storedData ? JSON.parse(storedData) : [];
+    
+    // Check if patient already exists
+    const index = patients.findIndex(p => p.dni === patient.dni);
+    if (index >= 0) {
+      // Update existing patient
+      patients[index] = patient;
+    } else {
+      // Add new patient
+      patients.push(patient);
+    }
+    
+    localStorage.setItem('anemiaPatients', JSON.stringify(patients));
+  }
+
   onSubmit() {
     if (this.anemiaForm.valid) {
       const input_data = [
@@ -251,6 +279,21 @@ export class Predict1Page implements OnInit {
               Resultado: ${this.prediccion}
               Nombre del Doctor: ${nombreDoctor}
             `;
+
+            // Save to localStorage only if patient has anemia
+            if (this.prediccion && this.prediccion.toLowerCase().includes('si tiene anemia')) {
+              const patientData: AnemiaPatient = {
+                dni: this.anemiaForm.value.dni,
+                nombre_apellido: this.anemiaForm.value.nombre_apellido,
+                edad: this.anemiaForm.value.edad,
+                peso: this.anemiaForm.value.peso,
+                altura: this.anemiaForm.value.altura,
+                sexo: this.anemiaForm.value.sexo,
+                hmg: this.anemiaForm.value.hmg,
+                fecha: new Date().toISOString().split('T')[0]
+              };
+              this.saveToLocalStorage(patientData);
+            }
 
             return new Observable<void>((observer) => {
               this.alertController.create({
@@ -376,10 +419,12 @@ export class Predict1Page implements OnInit {
               Resultado: this.prediccion || '',
               diagnostico: this.chatGptMessage || '',
             };
+
             return this.http.post('http://localhost:3000/api/registros', input_data2, { headers });
           })
         ).subscribe({
           complete: () => {
+            this.anemiaForm.reset(); // Limpia los campos del formulario después de que los datos se hayan guardado
             this.presentToast(`Resultado de la predicción: ${this.prediccion}`);
           },
           error: (err) => {
