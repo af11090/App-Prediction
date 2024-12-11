@@ -29,21 +29,22 @@ export class Tab2Page implements OnInit {
   }
 
   obtenerDatos() {
-    this.http.get<any[]>('http://localhost:3000/api/ver/registro').subscribe({
+    this.http.get<any[]>('http://localhost:3000/api/registros').subscribe({
       next: (data) => {
-        const datosLimpios = data
-          .filter(item => item.hmg !== null && item.hmg !== undefined && item.sexo) // Filtrar datos nulos e incluir sexo
-          .map(item => ({
-            ...item,
-            fecha: moment(item.fecha).isValid() ? moment(item.fecha).toDate() : null,
-            hmg: parseFloat(item.hmg) // Asegurar que hmg sea un número
-          }))
-          .filter(item => item.fecha !== null && !isNaN(item.hmg)); // Filtrar fechas no válidas
-
-        this.totalPacientes = datosLimpios.length;
-        this.calcularHmg(datosLimpios);
-        this.crearTendenciaAnemiaChart(datosLimpios);
-        this.crearTendenciaGeneroChart(datosLimpios);
+        console.log('Datos obtenidos', data);
+        // const datosLimpios = data
+        //   .filter(item => item.hmg !== null && item.hmg !== undefined && item.sexo) // Filtrar datos nulos e incluir sexo
+        //   .map(item => ({
+        //     ...item,
+        //     fecha: moment(item.fecha).isValid() ? moment(item.fecha).toDate() : null,
+        //     hmg: parseFloat(item.hmg) // Asegurar que hmg sea un número
+        //   }))
+        //   .filter(item => item.fecha !== null && !isNaN(item.hmg)); // Filtrar fechas no válidas
+        this.totalPacientes = data.length;
+        //console.log('Datos limpios', this.totalPacientes, datosLimpios);
+        this.calcularHmg(data);
+        this.crearTendenciaAnemiaChart(data);
+        this.crearTendenciaGeneroChart(data);
       },
       error: (error) => {
         console.error('Error al obtener los datos', error);
@@ -51,10 +52,27 @@ export class Tab2Page implements OnInit {
     });
   }
 
+  // calcularHmg(data: any[]) {
+  //   if (data.length === 0) return;
+
+  //   const hmgValues = data.map(p => p.hmg).filter(value => !isNaN(value));
+  //   this.promedioHmg = hmgValues.reduce((a, b) => a + b, 0) / hmgValues.length;
+  //   this.minHmg = Math.min(...hmgValues);
+  //   this.maxHmg = Math.max(...hmgValues);
+  // }
   calcularHmg(data: any[]) {
     if (data.length === 0) return;
 
-    const hmgValues = data.map(p => p.hmg).filter(value => !isNaN(value));
+    const pacientes = data.reduce((acc, item) => {
+      if (!acc[item.id_paciente]) {
+        acc[item.id_paciente] = parseFloat(item.Hmg);
+      }
+      return acc;
+    }, {});
+    console.log('Pacientes', pacientes);
+
+    const hmgValues = Object.values(pacientes).filter((value): value is number => !isNaN(value as number));
+
     this.promedioHmg = hmgValues.reduce((a, b) => a + b, 0) / hmgValues.length;
     this.minHmg = Math.min(...hmgValues);
     this.maxHmg = Math.max(...hmgValues);
