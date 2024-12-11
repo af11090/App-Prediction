@@ -79,13 +79,18 @@ export class Tab2Page implements OnInit {
   }
 
   crearTendenciaAnemiaChart(data: any[]) {
-    let fechas = data.map(p => p.fecha);
-    let hmgValues = data.map(p => p.hmg);
+    let fechas = data.map(p => p.Fecha);
+    console.log('Fechas', fechas);
+    let hmgValues = data.map(p => p.Hmg);
+    console.log('Hmg', hmgValues);
 
     const agrupadoPorTiempo = this.agruparPorTiempo(fechas, hmgValues, this.filtroTiempo);
+    console.log('Agrupado por tiempo', agrupadoPorTiempo);
 
     const labels = agrupadoPorTiempo.map(entry => entry.label);
+    console.log('Labels', labels);
     const valores = agrupadoPorTiempo.map(entry => entry.value);
+    console .log('Valores', valores);
 
     if (this.tendenciaAnemiaChart) {
       this.tendenciaAnemiaChart.destroy();
@@ -123,6 +128,7 @@ export class Tab2Page implements OnInit {
       }
     });
   }
+
 
   crearTendenciaGeneroChart(data: any[]) {
     const masculinoData = data.filter(p => p.sexo === 'M');
@@ -192,6 +198,7 @@ export class Tab2Page implements OnInit {
     };
 
     const agrupado: { [key: string]: { sum: number, count: number } } = {};
+    console.log('Agrupado', agrupado);
 
     fechas.forEach((fecha, index) => {
       const label = moment(fecha).format(formatoTiempo[filtro]);
