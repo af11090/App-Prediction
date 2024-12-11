@@ -111,16 +111,17 @@ export class Predict1Page implements OnInit {
   isWhatsAppAlertOpen = false;
   prediccion: string | undefined;
   pacienteId: number | undefined;
+  chatGptMessage: string;
   constructor(private fb: FormBuilder,private http: HttpClient,private alertController: AlertController,private loadingController: LoadingController,
     private toastController: ToastController,private navCtrl: NavController) {
       this.anemiaForm = this.fb.group({
-        dni: ['', [Validators.required, dniValidator]],
+        dni: ['22222222', [Validators.required, dniValidator]],
         nombre_apellido: ['', [Validators.required, nombreApellidoValidator]],
-        edad: ['', [Validators.required, Validators.min(6), Validators.max(60)]],
-        peso: ['', [Validators.required, rangoValidatorFactory('peso')]],
-        altura: ['', [Validators.required, rangoValidatorFactory('altura')]],
+        edad: ['6', [Validators.required, Validators.min(6), Validators.max(60)]],
+        peso: ['6', [Validators.required, rangoValidatorFactory('peso')]],
+        altura: ['55', [Validators.required, rangoValidatorFactory('altura')]],
         sexo: ['', Validators.required],
-        hmg: ['', [Validators.required, Validators.min(5), Validators.max(18.5)]],
+        hmg: ['5', [Validators.required, Validators.min(5), Validators.max(18.5)]],
       });
     }
     async presentLoading(message: string) {
@@ -225,9 +226,6 @@ export class Predict1Page implements OnInit {
         hmg: this.anemiaForm.value.hmg,
         fecha: new Date().toISOString().split('T')[0],
         hora: new Date().toTimeString().split(' ')[0],
-        tipo_prediccion: 1,
-        resultado: this.prediccion || '',
-        paciente_id: 1
       };
 
       this.presentLoading('Procesando predicción...').then(loading => {
@@ -250,8 +248,7 @@ export class Predict1Page implements OnInit {
               HMG: ${input_data2.hmg}
               Fecha: ${input_data2.fecha}
               Hora: ${input_data2.hora}
-              Tipo de Predicción: ${input_data2.tipo_prediccion}
-              Resultado: ${input_data2.resultado}
+              Resultado: ${this.prediccion}
               Nombre del Doctor: ${nombreDoctor}
             `;
 
@@ -274,7 +271,8 @@ export class Predict1Page implements OnInit {
                         Tipo_prediccion: 1,
                         Estado:1,
                         Resultado: this.prediccion || '',
-                        id_paciente:this.pacienteId
+                        id_paciente:this.pacienteId,
+                        diagnostico: this.prediccion || '',
                       };
                     this.http.post('http://localhost:3000/api/registros', input_data2, { headers }).subscribe({
                       complete: () => {
@@ -325,16 +323,16 @@ export class Predict1Page implements OnInit {
                         `;
 
                         // Mostrar el prompt en la consola
-                        console.log(prompt2);
+                        console.log(prompt);
                         const chatGptRequest = this.http.post('http://localhost:3000/api/chatgpt', { prompt });
-                        const imageRequest = this.http.post('http://localhost:3000/api/generar-imagen', { prompt2 });
+                        const imageRequest = this.http.post('http://localhost:3000/api/generar-imagen1', { prompt2 });
                         forkJoin([chatGptRequest, imageRequest]).pipe(
                           switchMap(([chatGptResponse, imageResponse]: [any, any]) => {
-                            const chatGptMessage = chatGptResponse.completion;
+                            this.chatGptMessage = chatGptResponse.completion;
                             const imageUrl = imageResponse.imageUrl;
                             const payloadWhatsApp = {
                               phone: '51'+ data.numero,
-                              message: chatGptMessage,
+                              message: this.chatGptMessage,
                               mediaUrl: imageUrl,
                             };
 
@@ -376,6 +374,7 @@ export class Predict1Page implements OnInit {
               Estado:1,
               id_paciente:this.pacienteId,
               Resultado: this.prediccion || '',
+              diagnostico: this.chatGptMessage || '',
             };
             return this.http.post('http://localhost:3000/api/registros', input_data2, { headers });
           })

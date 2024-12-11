@@ -117,21 +117,22 @@ export class Predict2Page implements OnInit {
   isWhatsAppAlertOpen = false;
   prediccion: string | undefined;
   pacienteId: number | undefined;
+  chatGptMessage: any;
   constructor(private fb: FormBuilder,private http: HttpClient,private alertController: AlertController,private loadingController: LoadingController,
     private toastController: ToastController,private navCtrl: NavController) {
       this.anemiaForm = this.fb.group({
-        dni: ['', [Validators.required, dniValidator]],
+        dni: ['22222222', [Validators.required, dniValidator]],
         nombre_apellido: ['', [Validators.required, nombreApellidoValidator]],
-        edad: ['', [Validators.required, Validators.min(6), Validators.max(60)]],
-        peso: ['', [Validators.required, rangoValidatorFactory('peso')]],
-        altura: ['', [Validators.required, rangoValidatorFactory('altura')]],
+        edad: ['6', [Validators.required, Validators.min(6), Validators.max(60)]],
+        peso: ['6', [Validators.required, rangoValidatorFactory('peso')]],
+        altura: ['55', [Validators.required, rangoValidatorFactory('altura')]],
         sexo: ['', Validators.required],
-        hmg: ['', [Validators.required, Validators.min(5), Validators.max(18.5)]],
-        rbc: ['', [Validators.required, rangoValidator(3.80, 6.10)]],
-        mcv: ['', [Validators.required, rangoValidator(77, 119)]],
-        mch: ['', [Validators.required, rangoValidator(25, 36)]],
-        mchc: ['', [Validators.required, rangoValidator(30, 36)]],
-        rdw: ['', [Validators.required, rangoValidator(11.50, 14.50)]],
+        hmg: ['5', [Validators.required, Validators.min(5), Validators.max(18.5)]],
+        rbc: ['4', [Validators.required, rangoValidator(3.80, 6.10)]],
+        mcv: ['78', [Validators.required, rangoValidator(77, 119)]],
+        mch: ['26', [Validators.required, rangoValidator(25, 36)]],
+        mchc: ['32', [Validators.required, rangoValidator(30, 36)]],
+        rdw: ['12', [Validators.required, rangoValidator(11.50, 14.50)]],
       });
     }
     async presentLoading(message: string) {
@@ -232,9 +233,7 @@ export class Predict2Page implements OnInit {
         hmg: this.anemiaForm.value.hmg,
         fecha: new Date().toISOString().split('T')[0],
         hora: new Date().toTimeString().split(' ')[0],
-        tipo_prediccion: 2,
-        resultado: this.prediccion || '',
-        paciente_id: 1
+
       };
 
       this.presentLoading('Procesando predicción...').then(loading => {
@@ -259,8 +258,12 @@ export class Predict2Page implements OnInit {
               HMG: ${input_data2.hmg}
               Fecha: ${input_data2.fecha}
               Hora: ${input_data2.hora}
-              Tipo de Predicción: ${input_data2.tipo_prediccion}
-              Resultado: ${input_data2.resultado}
+              Resultado: ${this.prediccion}
+              RBC: ${this.anemiaForm.value.rbc}
+              MCV: ${this.anemiaForm.value.mcv}
+              MCH: ${this.anemiaForm.value.mch}
+              MCHC: ${this.anemiaForm.value.mchc}
+              RDW: ${this.anemiaForm.value.rdw}
               Nombre del Doctor: ${nombreDoctor}
             `;
 
@@ -288,8 +291,10 @@ export class Predict2Page implements OnInit {
                         Tipo_prediccion: 2,
                         Estado:1,
                         Resultado: this.prediccion || '',
-                        id_paciente:this.pacienteId
+                        id_paciente:this.pacienteId,
+                        diagnostico: this.prediccion || ''
                       };
+                      console.log("datos enviados al registro",input_data2);
                     this.http.post('http://localhost:3000/api/registros', input_data2, { headers }).subscribe({
                       complete: () => {
                         this.presentToast('Registro completado');
@@ -339,16 +344,16 @@ export class Predict2Page implements OnInit {
                         `;
 
                         // Mostrar el prompt en la consola
-                        console.log(prompt2);
+                        console.log(prompt);
                         const chatGptRequest = this.http.post('http://localhost:3000/api/chatgpt', { prompt });
                         const imageRequest = this.http.post('http://localhost:3000/api/generar-imagen1', { prompt2 });
                         forkJoin([chatGptRequest, imageRequest]).pipe(
                           switchMap(([chatGptResponse, imageResponse]: [any, any]) => {
-                            const chatGptMessage = chatGptResponse.completion;
+                            this.chatGptMessage = chatGptResponse.completion;
                             const imageUrl = imageResponse.imageUrl;
                             const payloadWhatsApp = {
                               phone: '51'+ data.numero,
-                              message: chatGptMessage,
+                              message: this.chatGptMessage,
                               mediaUrl: imageUrl,
                             };
 
@@ -377,19 +382,22 @@ export class Predict2Page implements OnInit {
           switchMap(() => {
             const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
             const input_data2 = {
-              dni: this.anemiaForm.value.dni,
-              nombre_apellido: this.anemiaForm.value.nombre_apellido,
               Edad: this.anemiaForm.value.edad,
               Peso: this.anemiaForm.value.peso,
               Altura: this.anemiaForm.value.altura,
-              Sexo: this.anemiaForm.value.sexo === 'M' ? 'M' : 'F',
-              hmg: this.anemiaForm.value.hmg,
+              Hmg: this.anemiaForm.value.hmg,
+              RBC: this.anemiaForm.value.rbc,
+              MCV: this.anemiaForm.value.mcv,
+              MCH: this.anemiaForm.value.mch,
+              MCHC: this.anemiaForm.value.mchc,
+              RDW: this.anemiaForm.value.rdw,
               Fecha: new Date().toISOString().split('T')[0],
               Hora: new Date().toTimeString().split(' ')[0],
               Tipo_prediccion: 2,
               Estado:1,
-              id_paciente:this.pacienteId,
               Resultado: this.prediccion || '',
+              id_paciente:this.pacienteId,
+              diagnostico:this.chatGptMessage
             };
             return this.http.post('http://localhost:3000/api/registros', input_data2, { headers });
           })
