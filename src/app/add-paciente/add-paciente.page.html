@@ -1,45 +1,55 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
-      <ion-title>{{ isEditMode ? 'Editar Paciente' : 'Agregar Paciente' }}</ion-title>
-      <ion-buttons slot="end">
-          <ion-button (click)="dismiss()"><ion-icon name="close"></ion-icon></ion-button>
-      </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">
+      <ion-icon name="person-add-outline"></ion-icon>
+      {{ isEditMode ? 'Editar Paciente' : 'Nuevo Paciente' }}
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="pacienteForm" (ngSubmit)="onSubmit()">
-    <ion-item>
-      <ion-label position="stacked">DNI</ion-label>
-      <ion-input type="text" formControlName="dni"></ion-input>
-    </ion-item>
+  <form [formGroup]="pacienteForm" (ngSubmit)="onSubmit()" class="ion-padding">
+    <div class="form-group">
+      <ion-item>
+        <ion-label position="floating">DNI</ion-label>
+        <ion-input type="text" formControlName="dni" maxlength="8"></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label position="floating">Nombres</ion-label>
+        <ion-input type="text" formControlName="nombres"></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-label position="stacked">Nombres</ion-label>
-      <ion-input type="text" formControlName="nombres"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-label position="floating">Apellidos</ion-label>
+        <ion-input type="text" formControlName="apellidos"></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-label position="stacked">Apellidos</ion-label>
-      <ion-input type="text" formControlName="apellidos"></ion-input>
-    </ion-item>
+      <ion-item class="select-item">
+        <ion-label position="floating">Sexo</ion-label>
+        <ion-select formControlName="sexo" interface="action-sheet" placeholder="Seleccione el sexo">
+          <ion-select-option value="M">Masculino</ion-select-option>
+          <ion-select-option value="F">Femenino</ion-select-option>
+        </ion-select>
+      </ion-item>
 
-    <ion-item>
-      <ion-label position="stacked">Sexo</ion-label>
-      <ion-select formControlName="sexo">
-        <ion-select-option value="M">Masculino</ion-select-option>
-        <ion-select-option value="F">Femenino</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item>
-      <ion-label>Estado</ion-label>
-      <ion-select formControlName="estado" required>
+      <ion-item class="select-item">
+        <ion-label position="floating">Estado</ion-label>
+        <ion-select formControlName="estado" interface="action-sheet" placeholder="Seleccione el estado">
           <ion-select-option value="1">Activo</ion-select-option>
           <ion-select-option value="0">Inactivo</ion-select-option>
-      </ion-select>
-    </ion-item>
+        </ion-select>
+      </ion-item>
+    </div>
 
-    <ion-button expand="full" type="submit">{{ isEditMode ? 'Actualizar' : 'Registrar' }}</ion-button>
+    <ion-button expand="block" type="submit" class="ion-margin-top save-button">
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      {{ isEditMode ? 'Actualizar' : 'Guardar' }}
+    </ion-button>
   </form>
 </ion-content>
