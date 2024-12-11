@@ -1,0 +1,27 @@
+// También aplicar los mismos cambios en predict3.page.scss
+
+.custom-alert {
+  .alert-wrapper {
+    background: #fff;
+    border-radius: 15px;
+  }
+
+  .alert-head {
+    color: #333;
+    padding-bottom: 15px;
+  }
+
+  .alert-message {
+    color: #666;
+    font-size: 14px;
+  }
+
+  .alert-button-cancel {
+    color: #666;
+  }
+
+  .alert-button-confirm {
+    color: #3880ff;
+    font-weight: bold;
+  }
+}

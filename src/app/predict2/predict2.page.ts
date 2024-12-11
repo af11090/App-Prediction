@@ -155,6 +155,31 @@ export class Predict2Page implements OnInit {
   onRegresar() {
     this.navCtrl.navigateBack('/prediccion/tabs/tab1');
   }
+
+  async presentNotFoundAlert() {
+    const alert = await this.alertController.create({
+      header: 'Paciente no encontrado',
+      message: 'Primero debe realizar la predicción inicial para verificar si el paciente tiene anemia.',
+      cssClass: 'custom-alert',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'alert-button-cancel'
+        },
+        {
+          text: 'Ir a Predicción de Anemia',
+          cssClass: 'alert-button-confirm',
+          handler: () => {
+            this.navCtrl.navigateForward('/predict1');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
   onDniSearch() {
     const dni = this.anemiaForm.get('dni')?.value;
     if (dni) {
@@ -173,28 +198,27 @@ export class Predict2Page implements OnInit {
             sexo: patient.sexo,
             hmg: patient.hmg
           });
+          
+          // Continue with API call only if patient is found in localStorage
+          this.http.get(`http://localhost:3000/api/pacientesdni/${dni}`).subscribe({
+            next: (data: any) => {
+              if (data) {
+                this.pacienteId = data.id_paciente;
+              }
+            },
+            error: (err) => {
+              this.presentToast('Error al obtener datos por DNI');
+            }
+          });
+        } else {
+          this.presentNotFoundAlert();
         }
+      } else {
+        this.presentNotFoundAlert();
       }
-
-      // Continue with API call
-      this.http.get(`http://localhost:3000/api/pacientesdni/${dni}`).subscribe({
-        next: (data: any) => {
-          if (data) {
-            console.log(data);
-            const nombreApellido = `${data.Nombres} ${data.Apellidos}`;
-            this.anemiaForm.patchValue({
-              nombre_apellido: nombreApellido,
-              sexo: data.Sexo,
-            });
-            this.pacienteId = data.id_paciente;
-          }
-        },
-        error: (err) => {
-          this.presentToast('Error al obtener datos por DNI');
-        }
-      });
     }
   }
+
   ngOnInit() {
   }
   async presentResultAlert(message: string) {
