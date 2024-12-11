@@ -111,7 +111,7 @@ export class Predict1Page implements OnInit {
   isWhatsAppAlertOpen = false;
   prediccion: string | undefined;
   pacienteId: number | undefined;
-  chatGptMessage: string;
+  chatGptMessage: any;
   constructor(private fb: FormBuilder,private http: HttpClient,private alertController: AlertController,private loadingController: LoadingController,
     private toastController: ToastController,private navCtrl: NavController) {
       this.anemiaForm = this.fb.group({
