@@ -3,33 +3,55 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'home',
-    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
+    path: 'tabs', //Cambiar a tabs
+    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+  },
+  {
+    path: 'predict1',
+    loadChildren: () => import('./predict1/predict1.module').then( m => m.Predict1PageModule)
+  },
+  {
+    path: 'predict2',
+    loadChildren: () => import('./predict2/predict2.module').then( m => m.Predict2PageModule)
+  },
+  {
+    path: 'predict3',
+    loadChildren: () => import('./predict3/predict3.module').then( m => m.Predict3PageModule)
+  },
+  {
+    path: 'listapredict1',
+    loadChildren: () => import('./listapredict1/listapredict1.module').then( m => m.Listapredict1PageModule)
+  },
+  {
+    path: 'listapredict2',
+    loadChildren: () => import('./listapredict2/listapredict2.module').then( m => m.Listapredict2PageModule)
+  },
+  {
+    path: 'listapredict3',
+    loadChildren: () => import('./listapredict3/listapredict3.module').then( m => m.Listapredict3PageModule)
   },
   {
     path: '',
-    redirectTo: 'home',
-    pathMatch: 'full'
-  },  {
-    path: 'predictions',
-    loadChildren: () => import('./pages/predictions/predictions.module').then( m => m.PredictionsPageModule)
+    pathMatch: 'full',
+    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
   {
-    path: 'reports',
-    loadChildren: () => import('./pages/reports/reports.module').then( m => m.ReportsPageModule)
+    path: 'home', //Se agregó home para bienvenido
+    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
   },
   {
-    path: 'profile',
-    loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
+    path: 'tabpaciente',
+    loadChildren: () => import('./tabpaciente/tabpaciente.module').then( m => m.TabpacientePageModule)
   },
   {
-    path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
-  },
-  {
-    path: 'tabs',
-    loadChildren: () => import('./pages/tabs/tabs.module').then( m => m.TabsPageModule)
-  },
+    path: 'add-paciente',
+    loadChildren: () => import('./add-paciente/add-paciente.module').then( m => m.AddPacientePageModule)
+  }
+
+  
+
+
+
 
 ];
 

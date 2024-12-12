@@ -1,0 +1,14 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div [ngClass]="{'card-container': true, 'blue-background': sexo === '1', 'pink-background': sexo === '2'}">
+    <img [src]="getImagenDoctorPerfil()" alt="Doctor" class="doctor-image" />
+    <h2>{{ nombreDoctor }} {{ apellidosDoctor }} <br> Médico Pediatra</h2>
+    <p>Bienvenido al Hospital Virgen de la Puerta, La Esperanza. Estamos encantados de tenerlo con nosotros.</p>
+    <ion-button expand="full" class="get-started-button" (click)="Salir()">Salir</ion-button>
+  </div>
+</ion-content>

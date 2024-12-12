@@ -1,0 +1,156 @@
+ion-button {
+  --background: transparent; /* Fondo transparente */
+  --color: red; /* Color del texto o icono */
+}
+
+ion-button:hover {
+  --color: darkred; /* Cambiar color al pasar el ratón */
+}
+
+ion-header {
+  ion-toolbar {
+    --background: #ffffff;
+    
+    ion-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      
+      ion-icon {
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+ion-content {
+  --background: #f5f5f5;
+  
+  form {
+    max-width: 600px;
+    margin: 16px;
+    padding: 16px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+    .form-group {
+      ion-item {
+        --background: transparent;
+        --padding-start: 0;
+        --inner-padding-end: 0;
+        --border-color: #dcdcdc;
+        margin-bottom: 16px;
+
+        ion-label {
+          font-size: 0.9rem;
+          color: #666;
+        }
+
+        ion-input, ion-select {
+          font-size: 1rem;
+          --padding-start: 0;
+        }
+      }
+    }
+
+    ion-item {
+      --background: transparent;
+      --border-color: #e0e0e0;
+      --border-radius: 8px;
+      --padding-start: 0;
+      margin-bottom: 15px;
+      --highlight-color: #3498db;
+
+      &.select-item {
+        --border-width: 1px;
+        --border-style: solid;
+        --border-color: #dcdcdc;
+        
+        ion-select {
+          width: 100%;
+          max-width: 100%;
+          --padding-start: 10px;
+          --padding-end: 10px;
+          --padding-top: 12px;
+          --padding-bottom: 12px;
+          
+          &::part(icon) {
+            color: #666;
+            opacity: 1;
+          }
+          
+          &::part(text) {
+            color: #333;
+            font-size: 0.95rem;
+          }
+        }
+      }
+    }
+
+    ion-button[type="submit"] {
+      --background: #3498db;
+      --color: #ffffff;
+      --border-radius: 8px;
+      height: 44px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-top: 24px;
+      text-transform: none;
+      
+      ion-icon {
+        --color: #ffffff;
+        margin-right: 8px;
+      }
+      
+      &:hover {
+        --background: #2980b9;
+      }
+    }
+
+    ion-button {
+      --background: #3498db;
+      margin-top: 24px;
+      font-size: 1rem;
+      font-weight: 500;
+      height: 44px;
+      
+      ion-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  form {
+    margin: 10px;
+    padding: 15px;
+  }
+}
+
+.validation-error {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin: 4px 0 0 0;
+}
+
+.form-section {
+  padding: 15px;
+  border-radius: 8px;
+  background: #f8f9fa;
+  margin-bottom: 15px;
+}
+
+// Estilos para el action sheet de los selects
+::ng-deep .select-interface-option {
+  --color: #333333;
+  font-size: 0.95rem;
+  --padding-start: 16px;
+  
+  &.select-interface-option-selected {
+    --background: #e8f4fe;
+    --color: #3498db;
+    font-weight: 500;
+  }
+}

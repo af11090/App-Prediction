@@ -1,0 +1,79 @@
+.responsive-table {
+    overflow-x: auto;
+    
+    ion-grid {
+      min-width: 100px;
+    }
+  
+    ion-row {
+      border-bottom: 1px solid #ddd;
+      align-items: center;
+      
+      &:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      
+      &:hover {
+        background-color: #f5f5f5;
+      }
+    }
+  
+    .header-row {
+      background-color: #f4f4f4;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.9em;
+    }
+  
+    ion-col {
+      padding: 8px 4px; // Reducido el padding horizontal
+      font-size: 0.85em; // Aumentado el tamaño de fuente
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center; // Centrar contenido
+  
+      // Ajustar anchos específicos para cada columna
+      &:nth-child(1) { // DNI
+        max-width: 70px;
+        width: 15%;
+      }
+      &:nth-child(2) { // HMG
+        max-width: 50px;
+        width: 10%;
+      }
+      &:nth-child(3) { // Fecha
+        max-width: 80px;
+        width: 5%;
+      }
+      &:nth-child(4) { // Anemia
+        width: 5%;
+      }
+      &:last-child { // Acciones
+        width: 5%;
+        min-width: 40px;
+      }
+    }
+  }
+  
+  .delete-icon {
+    color: #ff4961;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 768px) {
+    ion-col {
+      padding: 8px !important;
+      font-size: 0.8em !important;
+    }
+  }
+  
+  ion-searchbar {
+    max-width: 600px;
+    margin: 10px auto;
+    --box-shadow: none;
+    --background: #f4f4f4;
+    --border-radius: 8px;
+  }
+  
