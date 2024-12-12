@@ -368,7 +368,7 @@ export class Predict1Page implements OnInit {
                         // Mostrar el prompt en la consola
                         console.log(prompt);
                         const chatGptRequest = this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/chatgpt', { prompt });
-                        const imageRequest = this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/generar-imagen', { prompt2 });
+                        const imageRequest = this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/generar-imagen1', { prompt2 });
                         forkJoin([chatGptRequest, imageRequest]).pipe(
                           switchMap(([chatGptResponse, imageResponse]: [any, any]) => {
                             this.chatGptMessage = chatGptResponse.completion;
