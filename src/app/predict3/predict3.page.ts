@@ -383,7 +383,7 @@ export class Predict3Page implements OnInit {
                         A hyper-realistic photograph of a ${age}-${rango}-old ${descriptor} ${genero} with a ${expression} expression on his ${complexion} face, reflecting signs of ${signos}. The background is ${background}, and the details are in high resolution. The ${descriptor} ${genero} is wearing clothes.
                         `;
 
-                        // Mostrar el prompt en la consola
+                        // Mostrar el prompt en la consolaa
                         console.log(prompt);
                         const chatGptRequest = this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/chatgpt', { prompt });
                         const imageRequest = this.http.post('https://backendjs-dee6d131d346.herokuapp.com/api/generar-imagen1', { prompt2 });
