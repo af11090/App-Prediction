@@ -5,35 +5,33 @@
     <ion-buttons slot="start">
       <ion-back-button class="custom-back-button" defaultHref="tabs/tabs/tab1"></ion-back-button>
     </ion-buttons>
-    <ion-title style="color: black;">Lista de predicciones de Grado de Severidad de la Anemia</ion-title>
+    <ion-title style="color: black;">Predicciones de Severidad</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content class="custom-content">
   <ion-searchbar class="custom-content" style="color: black;" [(ngModel)]="searchTerm" (ionInput)="filterDatos()"></ion-searchbar>
 
-  <ion-grid class="responsive-table">
-    <ion-row class="header-row">
-      <ion-col style="color: black;">DNI</ion-col>
-      <ion-col style="color: black;">PACIENTE</ion-col>
-      <ion-col style="color: black;">EDAD</ion-col>
-      <ion-col style="color: black;">HMG</ion-col>
-      <ion-col style="color: black;">FECHA</ion-col>
-      <ion-col style="color: black;">GRADO DE SEVERIDAD</ion-col>
-      <ion-col style="color: black;">ACCIONES</ion-col>
-    </ion-row>
-    <ion-row *ngFor="let dato of paginatedDatos">
-      <ion-col style="color: black;">{{ dato.DNI }}</ion-col>
-      <ion-col style="color: black;">{{ dato.Nombres }}</ion-col>
-      <ion-col style="color: black;">{{ dato.Edad }}</ion-col>
-      <ion-col style="color: black;">{{ dato.Hmg }}</ion-col>
-      <ion-col style="color: black;">{{ dato.Fecha }}</ion-col>
-      <ion-col style="color: black;">{{ dato.Resultado }}</ion-col>
-      <ion-col style="justify-content: center;"> <!-- Nueva columna para los botones -->
-        <!-- <ion-button color="primary">Editar</ion-button> -->
-        <ion-button color="secondary" (click)="eliminar(dato.id_registro)">Eliminar</ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div class="responsive-table">
+    <ion-grid>
+      <ion-row class="header-row">
+        <ion-col>DNI</ion-col>
+        <ion-col>HMG</ion-col>
+        <ion-col>FECHA</ion-col>
+        <ion-col>SEVERIDAD</ion-col>
+        <ion-col size="0.5"></ion-col>
+      </ion-row>
+      
+      <ion-row *ngFor="let dato of paginatedDatos">
+        <ion-col>{{ dato.DNI }}</ion-col>
+        <ion-col>{{ dato.Hmg }}</ion-col>
+        <ion-col>{{ dato.Fecha }}</ion-col>
+        <ion-col>{{ dato.Resultado }}</ion-col>
+        <ion-col size="0.5">
+          <ion-icon name="trash-outline" class="delete-icon" (click)="eliminar(dato.id_registro)"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
   <ion-footer>
     <ion-toolbar class="custom-content">
       <ion-buttons slot="end">

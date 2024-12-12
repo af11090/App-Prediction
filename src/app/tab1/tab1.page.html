@@ -1,80 +1,75 @@
+<ion-content>
+  <ion-card class="fixed-height beautiful-background" style="background-color: #FFF8E1;">
+    <ion-card-header>
+      <ion-card-title><b>ANEMIA</b></ion-card-title>
+      <ion-card-subtitle>Predicciones de anemia</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item routerLink="/predict1" class="custom-item">
+          <ion-thumbnail slot="start">
+            <img alt="Icono anemia" src="../../assets/anemia.jpg" />
+          </ion-thumbnail>
+          <ion-label>Predecir</ion-label>
+        </ion-item>
 
-<ion-card class="fixed-height beautiful-background" style="background-color: #FFF8E1; color: var(--ion-color-dark);">
-  <ion-card-header>
-    <ion-card-title><b>ANEMIA</b></ion-card-title>
-    <ion-card-subtitle>Predicciones de anemia </ion-card-subtitle>
-  </ion-card-header>
-  <ion-card-content>
-    <ion-list style="display: flex; flex-direction: row;">
-      <ion-item routerLink="/predict1" class="custom-item">
-        <ion-thumbnail slot="start" >
-          <img alt="Silhouette of mountains" src="../../assets/anemia.jpg" />
-        </ion-thumbnail>
-        <ion-label style="color: black;">Predecir</ion-label>
-      </ion-item>
+        <ion-item routerLink="/listapredict1" class="custom-item">
+          <ion-thumbnail slot="start">
+            <img alt="Icono listar" src="../../assets/listar.webp" />
+          </ion-thumbnail>
+          <ion-label>Listar</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 
-      <ion-item routerLink="/listapredict1" class="custom-item">
-        <ion-thumbnail slot="start">
-          <img alt="Silhouette of mountains" src="../../assets/listar.webp" />
-        </ion-thumbnail>
-        <ion-label style="color: black;">Listar predicciones</ion-label>
-      </ion-item>
+  <ion-card class="fixed-height beautiful-background" style="background-color: #A2D5F2; color: var(--ion-color-dark);">
+    <ion-card-header>
+      <ion-card-title><b>TIPO DE ANEMIA</b></ion-card-title>
+      <ion-card-subtitle>Predicciones del tipo de anemia </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list style="display: flex; flex-direction: row;">
+        <ion-item routerLink="/predict2" class="custom-item">
+          <ion-thumbnail slot="start">
+            <img alt="Silhouette of mountains" src="../../assets/anemia.jpg" />
+          </ion-thumbnail>
+          <ion-label style="color: black;" >Predecir</ion-label>
+        </ion-item>
 
+        <ion-item routerLink="/listapredict2" class="custom-item">
+          <ion-thumbnail slot="start">
+            <img alt="Silhouette of mountains" src="../../assets/listar.webp" />
+          </ion-thumbnail>
+          <ion-label style="color: black;">Listar </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 
-    </ion-list>
+  <ion-card class="fixed-height beautiful-background" style="background-color: #D3D3D3; color: var(--ion-color-dark);">
+    <ion-card-header>
+      <ion-card-title><b>SEVERIDAD DE ANEMIA</b></ion-card-title>
+      <ion-card-subtitle>Predicciones de severidad de anemia </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list style="display: flex; flex-direction: row;">
+        <ion-item routerLink="/predict3" class="custom-item">
+          <ion-thumbnail slot="start">
+            <img alt="Silhouette of mountains" src="../../assets/anemia.jpg" />
+          </ion-thumbnail>
+          <ion-label style="color: black;">Predecir</ion-label>
+        </ion-item>
 
-  </ion-card-content>
-</ion-card>
-
-<ion-card class="fixed-height beautiful-background" style="background-color: #A2D5F2; color: var(--ion-color-dark);">
-  <ion-card-header>
-    <ion-card-title><b>TIPO DE ANEMIA</b></ion-card-title>
-    <ion-card-subtitle>Predicciones del tipo de anemia </ion-card-subtitle>
-  </ion-card-header>
-  <ion-card-content>
-    <ion-list style="display: flex; flex-direction: row;">
-      <ion-item routerLink="/predict2" class="custom-item">
-        <ion-thumbnail slot="start">
-          <img alt="Silhouette of mountains" src="../../assets/anemia.jpg" />
-        </ion-thumbnail>
-        <ion-label style="color: black;" >Predecir</ion-label>
-      </ion-item>
-
-      <ion-item routerLink="/listapredict2" class="custom-item">
-        <ion-thumbnail slot="start">
-          <img alt="Silhouette of mountains" src="../../assets/listar.webp" />
-        </ion-thumbnail>
-        <ion-label style="color: black;">Listar predicciones</ion-label>
-      </ion-item>
-
-
-    </ion-list>
-
-  </ion-card-content>
-</ion-card>
-
-<ion-card class="fixed-height beautiful-background" style="background-color: #D3D3D3; color: var(--ion-color-dark);">
-  <ion-card-header>
-    <ion-card-title><b>SEVERIDAD DE ANEMIA</b></ion-card-title>
-    <ion-card-subtitle>Predicciones de severidad de anemia </ion-card-subtitle>
-  </ion-card-header>
-  <ion-card-content>
-    <ion-list style="display: flex; flex-direction: row;">
-      <ion-item routerLink="/predict3" class="custom-item">
-        <ion-thumbnail slot="start">
-          <img alt="Silhouette of mountains" src="../../assets/anemia.jpg" />
-        </ion-thumbnail>
-        <ion-label style="color: black;">Predecir</ion-label>
-      </ion-item>
-
-      <ion-item routerLink="/listapredict3" class="custom-item">
-        <ion-thumbnail slot="start">
-          <img alt="Silhouette of mountains" src="../../assets/listar.webp" />
-        </ion-thumbnail>
-        <ion-label style="color: black;">Listar predicciones</ion-label>
-      </ion-item>
-    </ion-list>
-  </ion-card-content>
-</ion-card>
+        <ion-item routerLink="/listapredict3" class="custom-item">
+          <ion-thumbnail slot="start">
+            <img alt="Silhouette of mountains" src="../../assets/listar.webp" />
+          </ion-thumbnail>
+          <ion-label style="color: black;">Listar </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
 
 
